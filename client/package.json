@@ -1,0 +1,45 @@
+{
+  "name": "deerclaw-client",
+  "description": "DeerClaw Desktop Client",
+  "private": true,
+  "version": "0.1.0",
+  "main": "electron/main.js",
+  "author": "DeerClaw",
+  "scripts": {
+    "build": "vite build",
+    "build:electron": "esbuild electron/main.ts --bundle --platform=node --outfile=electron/main.js --external:electron --external:electron-updater --external:electron-store && esbuild electron/preload.ts --bundle --platform=node --outfile=electron/preload.js --external:electron",
+    "electron:dev": "npm run build && npm run build:electron && electron .",
+    "electron:build": "npm run build && npm run build:electron && electron-builder"
+  },
+  "dependencies": {
+    "@tsparticles/engine": "^4.1.1",
+    "@tsparticles/react": "^4.1.1",
+    "@tsparticles/slim": "^4.1.1",
+    "@types/qrcode": "^1.5.6",
+    "electron-store": "^8.2.0",
+    "electron-updater": "^6.3.0",
+    "qrcode": "^1.5.4",
+    "react-is": "^19.2.6"
+  },
+  "devDependencies": {
+    "@tabler/icons-react": "^3.44.0",
+    "@tanstack/react-query": "^5.100.14",
+    "@vitejs/plugin-react": "^4.3.0",
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.0",
+    "esbuild": "^0.28.0",
+    "i18next": "^24.2.3",
+    "i18next-browser-languagedetector": "^8.2.1",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-i18next": "^15.7.4",
+    "react-router-dom": "^7.16.0",
+    "recharts": "^3.8.1",
+    "typescript": "^5.0.0",
+    "vite": "^6.0.0",
+    "zustand": "^5.0.14"
+  },
+  "build": {
+    "extends": "./electron-builder.yml"
+  }
+}

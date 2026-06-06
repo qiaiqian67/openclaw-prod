@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="./logo.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="DeerClaw — 企业数字员工平台" />
+  <title>DeerClaw</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400;1,6..72,500&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script>
+    // Electron 环境：拦截 fetch，把相对 /api/* 改写为配置中的服务器绝对地址
+    // 原因：loadFile 后页面是 file:// 协议，相对路径会被解析成 file:///C:/api/...
+    // 仅在 window.electronAPI 存在时启用，不影响 Web 端（Web 端依靠同源反代）
+    (function () {
+      if (!window.electronAPI) return;
+      // Mark the document so the custom title bar styles take effect, and
+      // set --titlebar-height synchronously so the first paint is correct
+      // (avoids a one-frame layout shift before React's useLayoutEffect runs).
+      document.documentElement.classList.add('is-electron');
+      document.documentElement.style.setProperty('--titlebar-height', '32px');
+      var originalFetch = window.fetch.bind(window);
+      function rewrite(input) {
+        var urlStr;
+        var isRequest = false;
+        if (typeof input === 'string') {
+          urlStr = input;
+        } else if (input && typeof input.url === 'string') {
+          urlStr = input.url;
+          isRequest = true;
+        } else {
+          return input;
+        }
+        // 已是绝对 http(s)/ws(s) URL，不动
+        if (/^[a-z][a-z0-9+.-]*:\/\//i.test(urlStr)) {
+          if (urlStr.startsWith('file://') && urlStr.indexOf('/api/') !== -1) {
+            // 已被浏览器解析为 file://.../api/...，提取 /api/... 部分
+            var m = urlStr.match(/\/api\/.*$/);
+            if (!m) return input;
+            urlStr = m[0];
+          } else {
+            return input;
+          }
+        } else if (urlStr.indexOf('/api/') !== 0) {
+          // 不是 /api/* 开头（且不是 file:// 形式），不动
+          return input;
+        }
+        var serverUrl = localStorage.getItem('serverUrl') || 'http://localhost:8000';
+        // 避免 /api 重复：用户配置的 serverUrl 以 /api 结尾时，剥离它
+        if (serverUrl.endsWith('/api') && urlStr.startsWith('/api/')) {
+          serverUrl = serverUrl.slice(0, -4);
+        }
+        var newUrl = serverUrl + urlStr;
+        return isRequest ? new Request(newUrl, input) : newUrl;
+      }
+      window.fetch = function (input, init) {
+        return originalFetch(rewrite(input), init);
+      };
+      // XHR 同步处理（api.ts 进度上传会用到）
+      var origOpen = XMLHttpRequest.prototype.open;
+      XMLHttpRequest.prototype.open = function (method, url) {
+        if (typeof url === 'string') {
+          var args = Array.prototype.slice.call(arguments);
+          args[1] = rewrite(url);
+          return origOpen.apply(this, args);
+        }
+        return origOpen.apply(this, arguments);
+      };
+    })();
+  </script>
+  <script type="module" crossorigin src="./assets/index-C9B9EwfS.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/vendor-react-DB04y0Hc.js">
+  <link rel="modulepreload" crossorigin href="./assets/vendor-i18n-BUm0GJs5.js">
+  <link rel="modulepreload" crossorigin href="./assets/vendor-icons-DGTiHUFO.js">
+  <link rel="stylesheet" crossorigin href="./assets/index-CHlevJni.css">
+</head>
+
+<body>
+  <div id="root"></div>
+</body>
+
+</html>
