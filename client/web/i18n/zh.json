@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "DeerClaw",
-    "tagline": "Enterprise Digital Employee Platform"
+    "tagline": "Enterprise Digital Employee Platform",
+    "desktopBrandTitle": "DeerClaw 桌面端"
   },
   "login": {
     "hero": {
@@ -64,7 +65,36 @@
     "statsWorking": "工作中",
     "statsResting": "休息中",
     "statsExpired": "待岗",
-    "expiredOn": "到期时间：{date}"
+    "expiredOn": "到期时间：{date}",
+    "zoneFilterHint": "点击只看该区域",
+    "noRole": "通用",
+    "card": {
+      "status": "状态",
+      "role": "角色",
+      "lastActive": "最近活跃",
+      "expires": "到期"
+    },
+    "menu": {
+      "message": "发送消息",
+      "detail": "查看详情",
+      "toggleStatus": "切换状态"
+    },
+    "toolbar": {
+      "searchPlaceholder": "搜索员工姓名…",
+      "searchAria": "搜索员工",
+      "statusAria": "按状态过滤",
+      "zoneAria": "按区域过滤",
+      "allStatuses": "全部状态",
+      "allZones": "全部区域",
+      "clear": "清空过滤"
+    },
+    "statusLabel": {
+      "running": "运行中",
+      "idle": "空闲",
+      "stopped": "已停止",
+      "error": "异常",
+      "creating": "创建中"
+    }
   },
   "talentMarket": {
     "title": "人才市场",
@@ -138,6 +168,8 @@
     "sendResetLink": "发送重置链接",
     "rememberedPassword": "想起密码了？",
     "backToLogin": "返回登录",
+    "serverSettingsTitle": "服务器设置",
+    "serverSettingsSubtitle": "配置后端 API、WebSocket 与更新服务器地址。",
     "resetPasswordTitle": "重置密码",
     "resetPasswordSubtitle": "为你的账号设置一个新密码。",
     "resetPasswordMissingToken": "链接中缺少重置令牌。",
@@ -166,7 +198,15 @@
     "refresh": "刷新二维码",
     "loginWithSSO": "使用企业 SSO 登录",
     "ssoNotice": "此域名已启用企业单点登录 (SSO)。",
-    "standardLogin": "标准登录"
+    "standardLogin": "标准登录",
+    "checkingInvitation": "正在检查邀请...",
+    "createOrJoinOrganization": "创建或加入组织",
+    "ssoLoadFailed": "加载 SSO 提供商失败。",
+    "ssoLoading": "正在加载 SSO 提供商...",
+    "ssoNoProviders": "未配置 SSO 提供商。",
+    "emailAlreadyRegistered": "该邮箱已注册，请直接登录",
+    "selectOrganization": "选择公司",
+    "multiTenantPrompt": "该邮箱对应多个公司，请选择要登录的公司："
   },
   "roles": {
     "platformAdmin": "超级管理员",
@@ -309,7 +349,8 @@
       "peer": "同事",
       "assistant": "助理",
       "direct_leader": "直属领导",
-      "other": "其他"
+      "other": "其他",
+      "descriptionPlaceholder": "描述..."
     },
     "tasks": {
       "todo": "待办",
@@ -424,7 +465,9 @@
       "openInNewTab": "在新标签页打开",
       "focusPreview": "聚焦预览",
       "unfocusPreview": "退出聚焦",
-      "versionHistory": "历史版本"
+      "versionHistory": "历史版本",
+      "confirmDelete": "确定要删除 {{name}} 吗？",
+      "deleteFailed": "删除失败"
     },
     "chat": {
       "sessionListTitle": "会话列表",
@@ -470,7 +513,14 @@
       "provider": "来源",
       "toolName": "工具名",
       "inProgress": "进行中",
-      "done": "完成"
+      "done": "完成",
+      "sessionLoadFailed": "加载会话失败",
+      "maxAttachmentReached": "最多可附加 10 个文件",
+      "goModelSettings": "前往模型管理",
+      "noModelAdmin": "请先在公司设置中配置模型，再与该数字员工对话。",
+      "noModelMember": "该公司尚未配置模型，请联系管理员。",
+      "noModelPlaceholder": "请先配置公司模型，再开始对话",
+      "noModelTitle": "未配置公司模型"
     },
     "activityLog": {
       "title": "工作日志",
@@ -545,7 +595,10 @@
         "websocketConnected": "已通过 WebSocket 连接（无需回调 URL）",
         "websocketDisconnected": "已配置为 WebSocket，但当前未连接",
         "websocketDisconnectedHint": "重新保存一次企业微信 WebSocket 配置即可重新连接。",
-        "saveChannel": "保存配置"
+        "saveChannel": "保存配置",
+        "mode": "连接模式",
+        "modeWebhook": "Webhook 回调",
+        "modeWs": "WebSocket（推荐）"
       },
       "danger": {
         "title": "危险操作",
@@ -572,7 +625,28 @@
         "current": "数字员工时区",
         "override": "此数字员工的自定义时区",
         "inherited": "使用公司默认时区",
-        "default": "↩ 公司默认"
+        "default": "↩ 公司默认",
+        "label": "Timezone",
+        "zones": {
+          "UTC": "UTC (Coordinated Universal Time)",
+          "Asia/Shanghai": "Asia/Shanghai (Beijing Time, UTC+8)",
+          "Asia/Tokyo": "Asia/Tokyo (Japan Time, UTC+9)",
+          "Asia/Seoul": "Asia/Seoul (Korea Time, UTC+9)",
+          "Asia/Singapore": "Asia/Singapore (Singapore Time, UTC+8)",
+          "Asia/Kolkata": "Asia/Kolkata (India Time, UTC+5:30)",
+          "Asia/Dubai": "Asia/Dubai (Gulf Time, UTC+4)",
+          "Europe/London": "Europe/London (UK Time, UTC+0/+1)",
+          "Europe/Paris": "Europe/Paris (Central European Time, UTC+1/+2)",
+          "Europe/Berlin": "Europe/Berlin (Central European Time, UTC+1/+2)",
+          "Europe/Moscow": "Europe/Moscow (Moscow Time, UTC+3)",
+          "America/New_York": "America/New_York (Eastern Time, UTC-5/-4)",
+          "America/Chicago": "America/Chicago (Central Time, UTC-6/-5)",
+          "America/Denver": "America/Denver (Mountain Time, UTC-7/-6)",
+          "America/Los_Angeles": "America/Los_Angeles (Pacific Time, UTC-8/-7)",
+          "America/Sao_Paulo": "America/Sao_Paulo (Brasilia Time, UTC-3)",
+          "Australia/Sydney": "Australia/Sydney (Australian Eastern Time, UTC+10/+11)",
+          "Pacific/Auckland": "Pacific/Auckland (New Zealand Time, UTC+12/+13)"
+        }
       },
       "heartbeat": {
         "title": "心跳",
@@ -598,7 +672,9 @@
         "useAccess": "使用",
         "useAccessDesc": "任务、聊天、工具、技能、工作区",
         "manageAccess": "管理",
-        "manageAccessDesc": "完全访问权限，包括设置、思维、关系"
+        "manageAccessDesc": "完全访问权限，包括设置、思维、关系",
+        "currentAccess": "当前权限",
+        "readOnly": "仅创建者或管理员可修改权限"
       },
       "tools": {
         "platformTools": "平台预置工具",
@@ -698,7 +774,8 @@
         "description": "当用户在网页端发起新对话时，Agent 会自动发送的欢迎语。支持 Markdown 语法。留空则不发送。",
         "saved": "已保存",
         "placeholder": "例如：你好！我是你的 AI 助手，有什么可以帮你的吗？"
-      }
+      },
+      "modelDisabledWarning": "此模型已被管理员停用，数字员工将自动使用备用模型。"
     },
     "tools": {
       "platformTools": "平台预置工具",
@@ -752,7 +829,13 @@
       "reloadPage": "重新加载页面",
       "selectAgent": "— 选择数字员工 —",
       "failedToCreateSession": "创建会话失败",
-      "failed": "失败"
+      "failed": "失败",
+      "collapseAll": "全部折叠",
+      "expandAll": "全部展开",
+      "mcpGroupDescription": "来自 {{name}} 的工具",
+      "noMatchingTools": "无匹配工具",
+      "searchTools": "搜索工具...",
+      "sourceTabs": "工具来源"
     },
     "toolCategories": {
       "file": "文件操作",
@@ -773,7 +856,8 @@
     "upload": {
       "success": "上传成功",
       "failed": "上传失败",
-      "uploading": "上传中..."
+      "uploading": "上传中...",
+      "dropToAttach": "拖放文件以附加（最多 10 个）"
     },
     "skillNames": {
       "web-research": "网络研究",
@@ -858,6 +942,21 @@
         "cookiesHelpLink": "Cookie-Editor",
         "cookiesHelpSuffix": "或类似浏览器扩展导出的 Cookie。必须是 JSON 数组格式。"
       }
+    },
+    "activity": {
+      "recent": "最近活动"
+    },
+    "sidePanel": {
+      "browser": "浏览器",
+      "closeCode": "关闭代码面板",
+      "code": "代码",
+      "desktop": "电脑",
+      "from": "来源",
+      "previewTabs": "预览区域",
+      "to": "目标",
+      "transfer": "传输",
+      "transferDone": "传输完成",
+      "transferRunning": "传输中"
     }
   },
   "wizard": {
@@ -1037,7 +1136,13 @@
     "placeholder": "输入消息...",
     "send": "发送",
     "deleteSession": "删除会话",
-    "deleteConfirm": "确定删除这个会话及其所有消息？此操作无法撤销。"
+    "deleteConfirm": "确定删除这个会话及其所有消息？此操作无法撤销。",
+    "modelSwitcher": {
+      "none": "无模型",
+      "title": "为此会话切换模型",
+      "defaultTag": "默认"
+    },
+    "stop": "停止"
   },
   "messages": {
     "title": "消息中心",
@@ -1083,7 +1188,8 @@
       "searchPlaceholder": "搜索国家或地区、代码或时区",
       "collapseRegionList": "收起地区列表",
       "expandRegionList": "展开地区列表",
-      "noMatch": "没有匹配的国家或地区"
+      "noMatch": "没有匹配的国家或地区",
+      "noTenant": "未选择公司。请刷新页面或联系支持。"
     },
     "systemEmail": {
       "title": "系统邮件配置",
@@ -1097,7 +1203,13 @@
       "timeout": "超时时间（秒）",
       "useSsl": "使用 SSL/TLS",
       "hint": "对于 Gmail，请使用应用密码。对于 QQ/163 邮箱，请使用 SMTP 授权码。",
-      "sendTest": "发送测试邮件"
+      "sendTest": "发送测试邮件",
+      "disabledHint": "系统邮件已停用。SMTP 设置可保存和测试，但注册时的邮件验证将被跳过。",
+      "enabled": "启用系统邮件",
+      "enabledHint": "系统邮件已启用。新注册（邮箱/密码方式）将需要邮件验证。",
+      "send": "发送",
+      "testPlaceholder": "输入收件人邮箱...",
+      "testSuccess": "测试邮件发送成功！"
     },
     "quotas": {
       "defaultUserQuotas": "默认用户配额",
@@ -1211,7 +1323,17 @@
       "vision": "视觉",
       "temperature": "模型温度",
       "temperaturePlaceholder": "例如 0.7 或 1.0（留空使用默认值）",
-      "temperatureDesc": "留空使用提供商默认值。o1/o3 推理模型通常需要 1.0"
+      "temperatureDesc": "留空使用提供商默认值。o1/o3 推理模型通常需要 1.0",
+      "clickToDisable": "点击停用",
+      "clickToEnable": "点击启用",
+      "defaultSaved": "默认模型已更新",
+      "defaultSaveFailed": "更新默认模型失败",
+      "setAsDefaultTitle": "设为新数字员工的默认模型",
+      "testFailedShort": "连通性测试失败",
+      "testTitle": "连通性测试",
+      "testErrorShort": "连通性测试出错",
+      "defaultBadge": "默认",
+      "setAsDefault": "设为默认"
     },
     "tools": {
       "title": "全局工具管理",
@@ -1234,6 +1356,7 @@
       "agentInstalledHint": "Agent 通过 `import_mcp_server` 安装的工具。删除将从该 Agent 中移除此工具。",
       "noAgentInstalledTools": "暂无 Agent 安装的工具。",
       "removeFromAgent": "从 Agent 中移除 \"{{name}}\"？",
+      "removeFailedRefresh": "工具已被移除，刷新列表",
       "delete": "删除",
       "addMcpServer": "添加 MCP 服务器",
       "mcpServer": "MCP 服务器",
@@ -1416,7 +1539,9 @@
         "agentbay_computer_dismiss_dialog": "[ENV: Cloud Desktop] 仅通过 Escape 安全关闭当前应用内弹窗或对话框。",
         "agentbay_computer_list_visible_apps": "[ENV: Cloud Desktop] 列出云桌面中正在运行的应用程序。",
         "atlassian_rovo": "连接到 Atlassian Rovo MCP 服务器以访问 Jira、Confluence 和 Compass。"
-      }
+      },
+      "configureSettings": "配置设置",
+      "sourceTabs": "工具来源"
     },
     "org": {
       "feishuSync": "飞书通讯录同步配置",
@@ -1567,7 +1692,8 @@
       "companyInvitation": "公司邀请",
       "companyInvitationDesc": "管理员邀请用户加入公司时发送。",
       "companyInvitationSubject": "{{inviter_name}} 邀请您加入 {{company_name}} 的 DeerClaw 团队",
-      "companyInvitationBody": "您好，\n\n{{inviter_name}} 邀请您加入他们在 DeerClaw 的团队\"{{company_name}}\"。\n\n要接受邀请并创建您的账号，请点击以下链接：\n\n{{invite_url}}\n\n如果您不想加入此团队或没有预期此邀请，可以忽略此邮件。"
+      "companyInvitationBody": "您好，\n\n{{inviter_name}} 邀请您加入他们在 DeerClaw 的团队\"{{company_name}}\"。\n\n要接受邀请并创建您的账号，请点击以下链接：\n\n{{invite_url}}\n\n如果您不想加入此团队或没有预期此邀请，可以忽略此邮件。",
+      "clickToInsert": "点击复制变量"
     },
     "users": {
       "user": "用户",
@@ -1659,8 +1785,17 @@
         "messagingTitle": "3. AI 主动发送一对一消息",
         "messagingDesc": "向企微成员主动发消息，需先获取有效的 API access_token，而获取 token 的请求 IP 必须在自建应用的「企业可信IP」白名单中。与飞书不同，企微对所有 API 调用均强制要求 IP 白名单，没有仅凭 token 认证的选项。",
         "footerText": "由于上述限制，目前大多数用户无法轻松完成企业微信集成配置。我们正在积极探索替代方案——包括申请企微服务商（ISV）资质及寻找限制更少的接入方式——同时也希望企微能够降低对 SaaS 平台的接入门槛。待可行路径明确后，配置入口将重新开启。"
-      }
-    }
+      },
+      "saveFirst": "请先保存配置以启用 SSO。",
+      "ssoDisabledHint": "通过单点登录实现无缝的企业登录。",
+      "ssoDomain": "自定义访问域名",
+      "ssoDomainDesc": "用户将通过此域名登录 SSO。",
+      "ssoDomainPlaceholder": "例如：acme.deerclaw.com",
+      "ssoIpConflict": "IP 模式下只能有一个企业开启 SSO，当前已有其他企业占用。",
+      "ssoTitle": "企业 SSO",
+      "ssoToggleFailed": "切换 SSO 失败"
+    },
+    "deleteCompanyConfirm": "确定要删除此公司及其全部数据吗？此操作无法撤销。"
   },
   "dialog": {
     "confirmTitle": "请确认",
@@ -1782,7 +1917,12 @@
     "toast": {
       "collapseDetails": "收起详情",
       "viewDetails": "查看详情"
-    }
+    },
+    "disabled": "已停用",
+    "enabled": "已启用",
+    "minutes": "分钟",
+    "saved": "已保存",
+    "saveFailed": "保存失败"
   },
   "admin": {
     "title": "公司管理",
@@ -1837,7 +1977,8 @@
     "all": "全部",
     "filterStatus": "按状态筛选",
     "enable": "启用",
-    "noFilterResults": "没有符合当前筛选条件的公司。"
+    "noFilterResults": "没有符合当前筛选条件的公司。",
+    "leaveBlankDefault": "留空使用全局默认值"
   },
   "companySetup": {
     "title": "设置你的公司",
@@ -1957,7 +2098,8 @@
       "step4": "消息接收模式选择 Stream 模式（推荐，无需公网 IP）",
       "step5": "将 AppKey 和 AppSecret 填入上方 → 点击保存配置",
       "step6": "发布应用 → 在钉钉中找到机器人，发送消息测试",
-      "note": "Stream 模式无需公网 IP 和回调地址，只需 AppKey 和 AppSecret 即可连接。"
+      "note": "Stream 模式无需公网 IP 和回调地址，只需 AppKey 和 AppSecret 即可连接。",
+      "agentIdPlaceholder": "钉钉应用 AgentId（可选）"
     },
     "wecom": {
       "step1": "登录 work.weixin.qq.com → 应用管理 → 自建应用 → 创建应用",
@@ -1988,24 +2130,6 @@
       "step3": "填写你自定义的 Verify Token；如需启用 X-Hub-Signature-256 签名校验，可选填写 App Secret。",
       "step4": "将下方 Webhook URL 粘贴到 Meta 的 WhatsApp Webhook 配置中并完成验证。",
       "step5": "为应用订阅 WhatsApp message webhook，让入站消息能送达这个智能体。"
-    }
-  },
-  "identity": {
-    "title": "组织架构与账号同步",
-    "addProvider": "添加同步源",
-    "type": "类型",
-    "name": "显示名称",
-    "config": "配置 (JSON)",
-    "configExample": "配置示例",
-    "deleteConfirm": "确定删除此 OA 账号源吗？",
-    "providerHints": {
-      "feishu": "飞书：需填写 app_id, app_secret（可选：encrypt_key, verification_token）",
-      "dingtalk": "钉钉：需填写 app_key, app_secret",
-      "wecom": "企业微信：传统模式需 corp_id, secret, agent_id；智能机器人模式需 bot_id, bot_secret",
-      "google_workspace": "Google Workspace：同一套 Client ID 和 Client Secret 同时用于 SSO 与管理员授权的目录同步",
-      "oauth2": "OAuth2：填写 App ID、App Secret、授权地址、Token地址、用户信息地址",
-      "saml": "SAML：需填写 entry_point, issuer, cert (公钥)",
-      "microsoft_teams": "Microsoft Teams：需填写 client_id, client_secret, tenant_id"
     }
   },
   "platformDashboard": {
@@ -2213,5 +2337,11 @@
     "selectLoginMethod": "选择登录方式",
     "loginWith": "使用 {{provider}} 登录",
     "noProviders": "未配置 SSO 提供商。"
+  },
+  "onboarding": {
+    "completeFailed": "完成引导失败"
+  },
+  "okr": {
+    "title": "OKR"
   }
 }

@@ -686,6 +686,52 @@
   max-width: 380px;
   width: 100%;
   margin: 0 auto;
+  /* 3D 翻转父级：仅提供视点，本身不带 transform */
+  perspective: 1200px;
+  perspective-origin: center;
+}
+
+/* ─────────────────────────────────────────────────────────
+   Login card 3D flip — 齿轮点击 → 整张卡片 rotateY 180°
+   - .atlas-login-form-wrapper 提供 perspective（见上）
+   - .login-card 用 grid 把两 face 重叠到同一 cell，高度 = max(两 face 内容)
+   - 不设 min-height、不设 overflow，避免任何滚动条
+   ───────────────────────────────────────────────────────── */
+.login-card {
+  display: grid;
+  grid-template-areas: "stack";
+  transform-style: preserve-3d;
+  transition: transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.login-card > * {
+  grid-area: stack;            /* 所有子项共享同一 grid cell → 自然重叠 */
+}
+.login-card[data-flipped="true"] {
+  transform: rotateY(180deg);
+}
+.login-card[data-flipping="true"] .login-card-face {
+  /* 翻转过程中锁住指针，防止点穿到反面 */
+  pointer-events: none;
+}
+.login-card-face {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: rotateY(0);
+  /* 不要 position: absolute / overflow / min-height —
+     让 grid 让两 face 高度 = max(内容自然高度)，不出现滚动条，不破坏原布局 */
+}
+.login-card-face--back {
+  transform: rotateY(180deg);  /* 初始就翻过去 */
+}
+
+/* prefers-reduced-motion：保留状态机但把过渡压到 80ms，视觉上瞬切 */
+@media (prefers-reduced-motion: reduce) {
+  .login-card {
+    transition: transform 80ms linear;
+  }
 }
 
 /* Login form widget overrides — scoped to .atlas-page so other pages

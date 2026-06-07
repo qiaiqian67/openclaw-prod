@@ -1426,7 +1426,11 @@ export default function Layout() {
                     assistantId={tourAssistantId}
                     isChinese={!!isChinese}
                     onDone={async () => {
-                        try { await onboardingApi.complete(); } catch { }
+                        try {
+                            await onboardingApi.complete();
+                        } catch (e: any) {
+                            toast.error(t('onboarding.completeFailed', '完成引导失败'), { details: String(e?.message || e) });
+                        }
                         navigate(tourAssistantId ? `/agents/${tourAssistantId}/chat?onboarding=1` : '/plaza', { replace: true });
                     }}
                 />

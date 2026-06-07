@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { IconMinus, IconSquare, IconSquareDot, IconX } from '@tabler/icons-react';
 
 export default function TitleBar() {
+  const { t } = useTranslation();
   // Only render inside Electron — web build has no window controls to expose.
   if (typeof window === 'undefined' || !window.electronAPI) return null;
 
@@ -30,7 +32,7 @@ export default function TitleBar() {
       {/* Brand section on the left. `no-drag` so it doesn't compete with
          the window-drag region in the middle; users can still select the
          text or right-click for the system menu. */}
-      <div className="titlebar-brand" title="DeerClaw 客户端">
+      <div className="titlebar-brand" title={t('app.desktopBrandTitle', 'DeerClaw Desktop')}>
         <img src="./logo.svg" alt="" className="titlebar-brand-logo" />
         <span className="titlebar-brand-name">DeerClaw</span>
         {version && <span className="titlebar-brand-version">v{version}</span>}

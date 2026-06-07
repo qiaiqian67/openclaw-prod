@@ -1,0 +1,39 @@
+client(web): i18n 化与可用性硬化（P0+P1+P2）
+
+集中整改客户端前端的中文用户体验、错误可见性与可访问性。
+涉及 11 个文件 + 1 个新增组件，约 +253 / -86 行。
+
+【P0-1】抽 IconButton 组件
+- 新建 web/components/ui/IconButton.tsx：强制 aria-label、4 变体 × 3 尺寸、用 CSS 变量
+- 替换 5 个文件 × 8 个图标按钮（关闭 / 缩放 / 下载等）
+
+【P0-2】7 处空 catch → toast
+- AgentDetailPage (5) / Layout.tsx (1) / EnterpriseSettings.tsx (1)
+- 失败操作（关系删除、模型切换、会话加载、引导完成、工具移除）现在有用户可见反馈
+
+【P0-3】修 3 个真·裸中文
+- TitleBar 品牌 tooltip / ChannelConfig 钉钉 placeholder / AgentDetailPage 附件上限 toast
+- 之前误报 421 处 → 实际只有 3 个真 bug
+
+【P1-1】i18n 顶层对齐
+- 删 zh 冗余顶层 identity；补 3 个新 key（sessionLoadFailed / removeFailedRefresh / onboarding.completeFailed）
+- en/zh 顶层 31/31 对齐
+
+【P1-2】补 2 个 zh 缺值
+- agent.settings.timezone.label / .zones（修 zh 模式拿到 undefined）
+
+【P1-3】给 29 个 zh-only key 加英文
+- 全从代码 fallback 提取，避免另起翻译
+- 涉及 8 个代码段（plaza / nav / timezone / maxToolRounds / heartbeat / wizard.step4 / openclaw / enterprise.kb）
+
+【P2-1】补 80 个 zh 缺值 key（中文用户视角）
+- 之前漏检的"zh 模式跑出英文"真 bug：t('key', 'English fallback') 模式下 zh 缺值就显示英文
+- 71 个 fallback 是英文 + 9 个资源对齐，全部加到 zh.json
+- 涉及 16 个文件
+
+【校验】
+- TypeScript tsc --noEmit 0 错误
+- JSON 合法
+- zh 模式 0 英文回退；en 模式 29 个 fallback 依赖消除
+
+详见 client/DEV-NOTES-I18N-HARDENING.md

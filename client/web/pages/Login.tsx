@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../stores';
@@ -6,6 +6,7 @@ import { authApi, tenantApi, fetchJson } from '../services/api';
 import type { TokenResponse } from '../types';
 import {
     IconAlertTriangle,
+    IconArrowLeft,
     IconArrowRight,
     IconCheck,
     IconSettings,
@@ -460,6 +461,34 @@ export default function Login() {
 
     const shouldShowGlobalOAuth = !tenant?.sso_enabled && !isRegister && !showVerification;
 
+    // 卡片翻转：data-flipping 标志 + focus 转移
+    const frontFaceRef = useRef<HTMLDivElement>(null);
+    const backFaceRef = useRef<HTMLDivElement>(null);
+    const [isFlipping, setIsFlipping] = useState(false);
+
+    const handleCardTransitionEnd = (e: React.TransitionEvent<HTMLDivElement>) => {
+        if (e.target !== e.currentTarget) return; // 只关心 .login-card 自身的 transform 过渡
+        if (e.propertyName !== 'transform') return;
+        setIsFlipping(false);
+        // 翻到目标面后，把焦点送过去 —— 屏幕阅读器 / 键盘用户都能跟上
+        const target = showServerSettings ? backFaceRef.current : frontFaceRef.current;
+        const firstInput = target?.querySelector<HTMLElement>('input, button, [tabindex]');
+        firstInput?.focus();
+    };
+
+    const openServerSettings = () => {
+        // 翻面前先清掉正面的反馈，避免"翻过去还看得到"再返回时复活
+        setError('');
+        setSuccessMessage('');
+        setIsFlipping(true);
+        setShowServerSettings(true);
+    };
+
+    const closeServerSettings = () => {
+        setIsFlipping(true);
+        setShowServerSettings(false);
+    };
+
     return (
         <AtlasFrame onToggleLang={toggleLang}>
             <div className="atlas-screen-split atlas-login-split">
@@ -481,6 +510,12 @@ export default function Login() {
                 {/* ── Right: Form Panel ── */}
                 <div className="atlas-screen-form atlas-login-form-pane">
                     <div className="atlas-login-form-wrapper">
+                    <div
+                        className="login-card"
+                        data-flipped={showServerSettings || undefined}
+                        data-flipping={isFlipping || undefined}
+                        onTransitionEnd={handleCardTransitionEnd}
+                    >
                     {checkingEmail ? (
                         // While resolving invitation email, show a minimal loading indicator
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '200px', gap: '16px' }}>
@@ -491,6 +526,12 @@ export default function Login() {
                         </div>
                     ) : (
                     <>
+                    <div
+                        className="login-card-face login-card-face--front"
+                        ref={frontFaceRef}
+                        aria-hidden={showServerSettings || undefined}
+                        inert={showServerSettings || undefined}
+                    >
                     <div className="login-form-header">
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <h2 className="login-form-title">
@@ -499,8 +540,12 @@ export default function Login() {
                                     : (isRegister ? t('auth.register') : t('auth.login'))}
                             </h2>
                             <button
+                                type="button"
                                 title={isZh ? '服务器设置' : 'Server Settings'}
-                                onClick={() => setShowServerSettings(!showServerSettings)}
+                                aria-label={isZh ? '服务器设置' : 'Server Settings'}
+                                aria-expanded={showServerSettings}
+                                aria-controls="login-server-settings"
+                                onClick={openServerSettings}
                                 style={{
                                     background: 'none', border: 'none', cursor: 'pointer',
                                     color: 'var(--text-tertiary)', padding: '4px',
@@ -522,61 +567,6 @@ export default function Login() {
                     {error && (
                         <div className="login-error">
                             <IconAlertTriangle size={16} stroke={1.8} /> {error}
-                        </div>
-                    )}
-
-                    {showServerSettings && (
-                        <div style={{
-                            marginBottom: '16px',
-                            padding: '16px',
-                            borderRadius: '12px',
-                            background: 'rgba(59,130,246,0.06)',
-                            border: '1px solid rgba(59,130,246,0.15)',
-                        }}>
-                            <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '12px', color: 'var(--accent-primary)' }}>
-                                {isZh ? '服务器设置' : 'Server Settings'}
-                            </div>
-                            <div className="login-field" style={{ marginBottom: '8px' }}>
-                                <label>API {isZh ? '服务器地址' : 'Server URL'}</label>
-                                <input
-                                    type="url"
-                                    value={serverUrl}
-                                    onChange={e => setServerUrl(e.target.value)}
-                                    placeholder="http://localhost:8000/api"
-                                />
-                                <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '4px' }}>
-                                    {isZh
-                                        ? '需包含后端 API 前缀（默认 /api），例如 http://server:8000/api'
-                                        : 'Include the API prefix (default /api), e.g. http://server:8000/api'}
-                                </div>
-                            </div>
-                            <div className="login-field" style={{ marginBottom: '12px' }}>
-                                <label>WebSocket {isZh ? '地址' : 'URL'}</label>
-                                <input
-                                    type="url"
-                                    value={wsUrl}
-                                    onChange={e => setWsUrl(e.target.value)}
-                                    placeholder="ws://localhost:8000/ws"
-                                />
-                            </div>
-                            <div className="login-field" style={{ marginBottom: '12px' }}>
-                                <label>{isZh ? '更新服务器地址' : 'Update Server URL'}</label>
-                                <input
-                                    type="url"
-                                    value={updateUrl}
-                                    onChange={e => setUpdateUrl(e.target.value)}
-                                    placeholder={isZh ? '留空则使用内置更新服务器' : 'Leave empty for built-in update server'}
-                                />
-                            </div>
-                            <button
-                                className="login-submit"
-                                onClick={saveServerConfig}
-                                style={{ fontSize: '13px', padding: '8px 16px' }}
-                            >
-                                {settingsSaved
-                                    ? (isZh ? '已保存 ✓' : 'Saved ✓')
-                                    : (isZh ? '保存设置' : 'Save Settings')}
-                            </button>
                         </div>
                     )}
 
@@ -829,7 +819,98 @@ export default function Login() {
                         </form>
                     )}
 
-                    {/* Multi-tenant selection modal */}
+                    {!showVerification && (
+                    <div className="login-switch">
+                        {isRegister ? t('auth.hasAccount') : t('auth.noAccount')}{' '}
+                        <a href="#" onClick={(e) => { e.preventDefault(); setIsRegister(!isRegister); setError(''); }}>
+                            {isRegister ? t('auth.goLogin') : t('auth.goRegister')}
+                        </a>
+                    </div>
+                    )}
+                    </div>
+                    {/* ── 背面：服务器设置 ── */}
+                    <div
+                        className="login-card-face login-card-face--back"
+                        id="login-server-settings"
+                        ref={backFaceRef}
+                        aria-hidden={!showServerSettings || undefined}
+                        inert={!showServerSettings || undefined}
+                    >
+                        <div className="login-form-header">
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <h2 className="login-form-title">
+                                    {t('auth.serverSettingsTitle', isZh ? '服务器设置' : 'Server Settings')}
+                                </h2>
+                                <button
+                                    type="button"
+                                    title={t('auth.backToLogin', isZh ? '返回登录' : 'Back to login')}
+                                    aria-label={t('auth.backToLogin', isZh ? '返回登录' : 'Back to login')}
+                                    aria-expanded={!showServerSettings}
+                                    onClick={closeServerSettings}
+                                    style={{
+                                        background: 'none', border: 'none', cursor: 'pointer',
+                                        color: 'var(--text-tertiary)', padding: '4px',
+                                        display: 'flex', alignItems: 'center',
+                                    }}
+                                >
+                                    <IconArrowLeft size={18} />
+                                </button>
+                            </div>
+                            <p className="login-form-subtitle">
+                                {t('auth.serverSettingsSubtitle', isZh
+                                    ? '配置后端 API、WebSocket 与更新服务器地址。'
+                                    : 'Configure backend API, WebSocket and update server URLs.')}
+                            </p>
+                        </div>
+
+                        <div className="login-field" style={{ marginBottom: '8px' }}>
+                            <label>API {isZh ? '服务器地址' : 'Server URL'}</label>
+                            <input
+                                type="url"
+                                value={serverUrl}
+                                onChange={e => setServerUrl(e.target.value)}
+                                placeholder="http://localhost:8000/api"
+                            />
+                            <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginTop: '4px' }}>
+                                {isZh
+                                    ? '需包含后端 API 前缀（默认 /api），例如 http://server:8000/api'
+                                    : 'Include the API prefix (default /api), e.g. http://server:8000/api'}
+                            </div>
+                        </div>
+                        <div className="login-field" style={{ marginBottom: '12px' }}>
+                            <label>WebSocket {isZh ? '地址' : 'URL'}</label>
+                            <input
+                                type="url"
+                                value={wsUrl}
+                                onChange={e => setWsUrl(e.target.value)}
+                                placeholder="ws://localhost:8000/ws"
+                            />
+                        </div>
+                        <div className="login-field" style={{ marginBottom: '12px' }}>
+                            <label>{isZh ? '更新服务器地址' : 'Update Server URL'}</label>
+                            <input
+                                type="url"
+                                value={updateUrl}
+                                onChange={e => setUpdateUrl(e.target.value)}
+                                placeholder={isZh ? '留空则使用内置更新服务器' : 'Leave empty for built-in update server'}
+                            />
+                        </div>
+                        <button
+                            className="login-submit"
+                            onClick={saveServerConfig}
+                            style={{ fontSize: '13px', padding: '8px 16px' }}
+                        >
+                            {settingsSaved
+                                ? (isZh ? '已保存 ✓' : 'Saved ✓')
+                                : (isZh ? '保存设置' : 'Save Settings')}
+                        </button>
+                    </div>
+                    </>
+                    )}
+                    </div>
+                    </div>
+                    {/* Multi-tenant selection modal —— 放在 .atlas-login-form-wrapper 之外，
+                        避免被 .login-card 的 3D transform 误作为 containing block 而跟着翻转扭曲 */}
                     {tenantSelection && (
                         <div style={{
                             position: 'fixed',
@@ -973,18 +1054,6 @@ export default function Login() {
                             </div>
                         </div>
                     )}
-
-                    {!showVerification && (
-                    <div className="login-switch">
-                        {isRegister ? t('auth.hasAccount') : t('auth.noAccount')}{' '}
-                        <a href="#" onClick={(e) => { e.preventDefault(); setIsRegister(!isRegister); setError(''); }}>
-                            {isRegister ? t('auth.goLogin') : t('auth.goRegister')}
-                        </a>
-                    </div>
-                    )}
-                    </>
-                    )}
-                    </div>
                 </div>
             </div>
         </AtlasFrame>

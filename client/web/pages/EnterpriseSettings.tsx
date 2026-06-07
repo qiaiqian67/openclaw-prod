@@ -900,8 +900,9 @@ export default function EnterpriseSettings() {
                                                                             if (!ok) return;
                                                                             try {
                                                                                 await fetchJson(`/tools/agent-tool/${row.agent_tool_id}`, { method: 'DELETE' });
-                                                                            } catch {
-                                                                                // Already deleted (e.g. removed via Global Tools) — just refresh
+                                                                            } catch (e: any) {
+                                                                                // Already deleted (e.g. removed via Global Tools) — refresh, but warn
+                                                                                toast.warning(t('enterprise.tools.removeFailedRefresh', '工具已被移除，刷新列表'), { details: String(e?.message || e) });
                                                                             }
                                                                             loadAgentInstalledTools();
                                                                         }}>{t('enterprise.tools.delete')}</button>

@@ -8287,6 +8287,18 @@ select:focus {
   min-height: 540px;
   border-radius: 16px;
   background:
+    /* 透视地面网格：水平 + 垂直细线，向远方收敛 */
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--border-default) 22%, transparent) 0 1px,
+      transparent 1px 60px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--border-default) 18%, transparent) 0 1px,
+      transparent 1px 80px
+    ),
+    radial-gradient(ellipse at 50% 110%, color-mix(in srgb, var(--accent-primary) 8%, transparent), transparent 60%),
     radial-gradient(circle at 20% 10%, color-mix(in srgb, var(--accent-primary) 6%, transparent), transparent 40%),
     radial-gradient(circle at 80% 90%, color-mix(in srgb, var(--status-running, #22c55e) 5%, transparent), transparent 45%),
     var(--bg-secondary);
@@ -8294,14 +8306,33 @@ select:focus {
   overflow: hidden;
   user-select: none;
 }
+/* 顶部光晕，让场景有一点"灯下"的感觉 */
+.my-company-scene::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, #ffffff 4%, transparent) 0%,
+    transparent 30%,
+    transparent 70%,
+    color-mix(in srgb, #000000 6%, transparent) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
 
 /* Zone backdrops */
 .my-company-zone {
   position: absolute;
   border-radius: 12px;
-  border: 1px dashed color-mix(in srgb, var(--border-default) 70%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-default) 60%, transparent);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--bg-elevated) 40%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--bg-elevated) 30%, transparent);
   pointer-events: none;
-  transition: background 0.4s ease;
+  transition: background 0.4s ease, border-color 0.3s ease;
+  z-index: 1;
 }
 
 .my-company-zone-label {
@@ -8317,6 +8348,23 @@ select:focus {
   padding: 2px 8px;
   border-radius: 6px;
   border: 1px solid var(--border-subtle);
+  pointer-events: none;
+}
+.my-company-zone-label--clickable {
+  pointer-events: auto;
+  cursor: pointer;
+  font-family: inherit;
+  border: 1px solid var(--border-subtle);
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.my-company-zone-label--clickable:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-primary);
+}
+.my-company-zone-label--clickable.is-active {
+  background: var(--accent-primary);
+  color: #fff;
+  border-color: var(--accent-primary);
 }
 
 /* Office — top right, compact */
@@ -8834,6 +8882,327 @@ select:focus {
   50%      { transform: rotate(6deg)  scale(1.05); }
 }
 
+/* === CompanyToolbar — 顶部搜索 + 状态 + 区域过滤 === */
+.company-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+}
+.company-toolbar__search {
+  flex: 1 1 200px;
+  min-width: 180px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.company-toolbar__search:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-primary) 25%, transparent);
+}
+.company-toolbar__select {
+  padding: 6px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  outline: none;
+  cursor: pointer;
+  min-width: 120px;
+}
+.company-toolbar__select:focus {
+  border-color: var(--accent-primary);
+}
+.company-toolbar__clear {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-family: inherit;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.company-toolbar__clear:hover {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  border-color: var(--accent-primary);
+}
+
+/* === AgentHoverCard — 跟随光标的详情卡片 === */
+.agent-hover-card {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  transform: translate(12px, 12px);
+  min-width: 200px;
+  max-width: 260px;
+  padding: 10px 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: 10px;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.18),
+    0 0 0 1px color-mix(in srgb, var(--accent-primary) 8%, transparent);
+  font-size: 12px;
+  color: var(--text-primary);
+  animation: agent-hover-card-in 0.18s ease-out;
+}
+@keyframes agent-hover-card-in {
+  from { opacity: 0; transform: translate(12px, 14px); }
+  to   { opacity: 1; transform: translate(12px, 12px); }
+}
+.agent-hover-card__name {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+.agent-hover-card__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 2px 0;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.agent-hover-card__label {
+  flex-shrink: 0;
+  width: 56px;
+  color: var(--text-tertiary);
+}
+.agent-hover-card__value {
+  flex: 1;
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+.agent-hover-card__value--mono {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10.5px;
+}
+
+/* === AgentContextMenu — 右键狐狸弹出的菜单 === */
+.agent-context-menu {
+  position: fixed;
+  z-index: 1001;
+  min-width: 160px;
+  padding: 4px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
+  animation: agent-context-menu-in 0.12s ease-out;
+}
+@keyframes agent-context-menu-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.agent-context-menu__item {
+  display: block;
+  width: 100%;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  text-align: left;
+  background: transparent;
+  color: var(--text-primary);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+.agent-context-menu__item:hover {
+  background: color-mix(in srgb, var(--accent-primary) 15%, transparent);
+}
+
+/* === fox-agent 加 hover 抬起效果（仅在非移动） === */
+@media (hover: hover) {
+  .fox-agent:hover {
+    transform: translate(-50%, calc(-100% - 4px));
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.18));
+  }
+  .fox-agent--work.fox-agent--sitting:hover {
+    transform: translate(-50%, calc(-100% + 6px));
+  }
+}
+
+/* === 角色微动：眨眼 / 耳朵抽 / 呼吸 === */
+/* 眨眼：scaleY 1 → 0.1 → 1，循环 5s 但只占 ~5% 时间 */
+.fox-eyes {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: fox-blink 5s ease-in-out infinite;
+}
+@keyframes fox-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  94%, 97%      { transform: scaleY(0.1); }
+}
+
+/* 耳朵抽：偶尔旋转一下，~3% 时间，循环 8s */
+.fox-ears {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: fox-ear-twitch 8s ease-in-out infinite;
+}
+@keyframes fox-ear-twitch {
+  0%, 96%, 100% { transform: rotate(0deg) scaleY(1); }
+  97%           { transform: rotate(8deg) scaleY(0.95); }
+  98%           { transform: rotate(-6deg) scaleY(1.05); }
+  99%           { transform: rotate(2deg) scaleY(1); }
+}
+
+/* 呼吸：身体轻微缩放，3.5s 周期（与走路 bob 不冲突，因为走路只走时才有） */
+.fox-body {
+  animation: fox-breathe 3.5s ease-in-out infinite;
+}
+@keyframes fox-breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.018); }
+}
+
+/* 走路时呼吸效果叠加在 bob 上（bob 已有，不能用 animation 简写覆盖） */
+.fox-body--walk {
+  animation:
+    fox-body-bob 0.5s ease-in-out infinite,
+    fox-breathe 3.5s ease-in-out infinite;
+}
+
+/* === 状态相关动画：打字 / 失联 / 错误 === */
+/* 工作中打字：极微的 X 抖动 + 整体微缩放（手部击键） */
+.fox-agent--typing .fox-svg {
+  animation: fox-typing 0.18s steps(2) infinite;
+}
+@keyframes fox-typing {
+  0%   { transform: translateX(-0.3px) scale(1); }
+  50%  { transform: translateX(0.3px)  scale(1.005); }
+  100% { transform: translateX(-0.3px) scale(1); }
+}
+
+/* 失联：周期性整体抖动（数据心跳丢失的视觉暗示） */
+.fox-agent--offline .fox-svg {
+  animation: fox-offline-shake 4s ease-in-out infinite;
+}
+@keyframes fox-offline-shake {
+  0%, 92%, 100% { transform: translate(0, 0) rotate(0); filter: grayscale(0.6) opacity(0.7); }
+  93%           { transform: translate(-1.5px, 0.5px) rotate(-2deg); }
+  94%           { transform: translate(1.5px, -0.5px) rotate(2deg); }
+  95%           { transform: translate(-1px, 0.3px) rotate(-1deg); }
+  96%           { transform: translate(1px, -0.3px) rotate(1deg); }
+}
+
+/* 错误：身体变灰 + 红色脉冲 */
+.fox-agent--error .fox-svg {
+  filter: grayscale(0.5);
+  animation: fox-error-pulse 1.6s ease-in-out infinite;
+}
+@keyframes fox-error-pulse {
+  0%, 100% { filter: grayscale(0.5) drop-shadow(0 0 0 rgba(255, 90, 90, 0)); }
+  50%      { filter: grayscale(0.5) drop-shadow(0 0 6px rgba(255, 90, 90, 0.6)); }
+}
+
+/* === 环境氛围层（光斑 / 尘埃 / 窗外云） === */
+.ambient-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* 光斑：暖色径向渐变 + 慢速脉冲，集中在 work 区 */
+.ambient-speck {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(8px);
+  opacity: 0.35;
+  animation: ambient-speck-pulse 5.5s ease-in-out infinite;
+}
+.ambient-speck--1 { top: 32%; left: 28%; width: 80px;  height: 80px;  background: radial-gradient(circle, rgba(90,176,255,0.6) 0%, transparent 70%); animation-delay: 0s; }
+.ambient-speck--2 { top: 36%; left: 50%; width: 100px; height: 100px; background: radial-gradient(circle, rgba(126,224,197,0.5) 0%, transparent 70%); animation-delay: 1.2s; }
+.ambient-speck--3 { top: 40%; left: 72%; width: 70px;  height: 70px;  background: radial-gradient(circle, rgba(154,214,160,0.55) 0%, transparent 70%); animation-delay: 2.4s; }
+.ambient-speck--4 { top: 28%; left: 18%; width: 60px;  height: 60px;  background: radial-gradient(circle, rgba(255,184,108,0.45) 0%, transparent 70%); animation-delay: 3.6s; }
+@keyframes ambient-speck-pulse {
+  0%, 100% { opacity: 0.25; transform: scale(1); }
+  50%      { opacity: 0.55; transform: scale(1.15); }
+}
+
+/* 尘埃：小白点慢速上升 + 水平漂移 */
+.ambient-dust {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: color-mix(in srgb, #ffffff 80%, transparent);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.4);
+  opacity: 0;
+  animation: ambient-dust-float 18s linear infinite;
+}
+.ambient-dust--1 { left: 8%;  animation-delay: 0s;   animation-duration: 20s; }
+.ambient-dust--2 { left: 22%; animation-delay: 4s;   animation-duration: 16s; }
+.ambient-dust--3 { left: 38%; animation-delay: 8s;   animation-duration: 22s; }
+.ambient-dust--4 { left: 56%; animation-delay: 2s;   animation-duration: 18s; }
+.ambient-dust--5 { left: 72%; animation-delay: 10s;  animation-duration: 24s; }
+.ambient-dust--6 { left: 88%; animation-delay: 6s;   animation-duration: 19s; }
+@keyframes ambient-dust-float {
+  0%   { transform: translateY(0)    translateX(0);    opacity: 0; }
+  10%  { opacity: 0.6; }
+  50%  { transform: translateY(-200px) translateX(20px); opacity: 0.4; }
+  90%  { opacity: 0.5; }
+  100% { transform: translateY(-400px) translateX(-10px); opacity: 0; }
+}
+
+/* 窗外云：在 office 区上方的天空区域飘过 */
+.ambient-clouds {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30%;
+  height: 24%;
+  pointer-events: none;
+  overflow: hidden;
+}
+.ambient-cloud {
+  position: absolute;
+  background: color-mix(in srgb, #ffffff 85%, transparent);
+  border-radius: 999px;
+  filter: blur(2px);
+  opacity: 0.55;
+}
+.ambient-cloud--1 {
+  top: 18%;
+  width: 36px;
+  height: 12px;
+  animation: ambient-cloud-drift 22s linear infinite;
+  animation-delay: 0s;
+}
+.ambient-cloud--2 {
+  top: 50%;
+  width: 28px;
+  height: 10px;
+  animation: ambient-cloud-drift 30s linear infinite;
+  animation-delay: -8s;
+  opacity: 0.4;
+}
+@keyframes ambient-cloud-drift {
+  0%   { transform: translateX(-60px); }
+  100% { transform: translateX(180px); }
+}
+
 /* Reduced motion: keep the position transitions but drop keyframe loops */
 @media (prefers-reduced-motion: reduce) {
   .fox-tail--walking,
@@ -8850,7 +9219,18 @@ select:focus {
   .fox-activity--stretch,
   .fox-activity--phone,
   .fox-agent--standby.fox-agent--pacing,
-  .my-company-empty-art {
+  .my-company-empty-art,
+  .agent-hover-card,
+  .agent-context-menu,
+  .fox-eyes,
+  .fox-ears,
+  .fox-body,
+  .fox-agent--typing .fox-svg,
+  .fox-agent--offline .fox-svg,
+  .fox-agent--error .fox-svg,
+  .ambient-speck,
+  .ambient-dust,
+  .ambient-cloud {
     animation: none !important;
   }
   .fox-agent {

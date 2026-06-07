@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../stores';
@@ -281,9 +281,10 @@ function slotIndexFor(agentId: string, slotCount: number): number {
 
 /* ─────────────────────────────────────────────────────────
  *  Fox SVG
+ *  - 视觉重做：头大身短、尾巴上翘、整体 1.5px 描边
+ *  - 眼睛双层（外圈深 + 内圈白点）增加神态
  * ──────────────────────────────────────────────────────── */
-function Fox({ pose, name }: { pose: Pose; name: string }) {
-    // Tail rotation differs by pose: standing/sitting/pacing/walking
+function Fox({ pose, name, agentId }: { pose: Pose; name: string; agentId: string }) {
     const tailClass = `fox-tail fox-tail--${pose}`;
     const legClass = pose === 'walking' || pose === 'pacing' ? 'fox-legs fox-legs--walk' : 'fox-legs';
     const bodyClass = pose === 'walking' || pose === 'pacing' ? 'fox-body fox-body--walk' : 'fox-body';
@@ -292,36 +293,64 @@ function Fox({ pose, name }: { pose: Pose; name: string }) {
         pose === 'walking' || pose === 'pacing' ? 'fox-head fox-head--walk' :
         'fox-head';
 
+    // 用 agentId 哈希算稳定的随机延迟，给每只狐狸不同的动画相位
+    const h = (() => {
+        let n = 0;
+        for (let i = 0; i < agentId.length; i++) n = (n * 31 + agentId.charCodeAt(i)) >>> 0;
+        return n;
+    })();
+    const blinkDelay = `${(h % 5000) / 1000}s`;
+    const earDelay = `${((h >> 5) % 7000) / 1000}s`;
+    const breatheDelay = `${((h >> 10) % 3000) / 1000}s`;
+
     return (
         <svg className="fox-svg" viewBox="0 0 44 56" aria-label={name}>
-            {/* tail */}
+            {/* tail — 上翘弧度更大 */}
             <g className={tailClass}>
-                <path d="M32 38 q10 -2 10 -12 q-2 4 -8 5 z" fill="#e07b3a" />
-                <path d="M34 36 q6 -2 6 -10" fill="#fff" />
+                <path
+                    d="M32 40 q12 -4 12 -16 q-2 6 -8 6 z"
+                    fill="#e07b3a"
+                    stroke="var(--ink, #1f1b16)"
+                    strokeWidth="1.2"
+                    strokeLinejoin="round"
+                />
+                <path d="M36 36 q6 -3 6 -10" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
             </g>
-            {/* legs (behind body) */}
+            {/* legs (behind body) — 缩短 */}
             <g className={legClass}>
-                <rect x="14" y="42" width="4" height="10" rx="2" fill="#c95f1f" />
-                <rect x="24" y="42" width="4" height="10" rx="2" fill="#c95f1f" />
+                <rect x="14" y="42" width="4" height="8" rx="2" fill="#c95f1f" stroke="var(--ink, #1f1b16)" strokeWidth="1" />
+                <rect x="24" y="42" width="4" height="8" rx="2" fill="#c95f1f" stroke="var(--ink, #1f1b16)" strokeWidth="1" />
             </g>
-            {/* body */}
-            <g className={bodyClass}>
-                <ellipse cx="22" cy="40" rx="12" ry="10" fill="#e07b3a" />
-                <ellipse cx="22" cy="43" rx="8" ry="6" fill="#fff" />
+            {/* body — 缩短 10% */}
+            <g className={bodyClass} style={{ animationDelay: breatheDelay }}>
+                <ellipse cx="22" cy="41" rx="11" ry="8" fill="#e07b3a" stroke="var(--ink, #1f1b16)" strokeWidth="1.4" />
+                <ellipse cx="22" cy="44" rx="7" ry="5" fill="#fff" />
             </g>
-            {/* head */}
+            {/* head — 头部 16→17 放大，下移一点让身段更紧凑 */}
             <g className={headClass}>
-                {/* ears */}
-                <path d="M10 18 l4 -8 l4 6 z" fill="#e07b3a" />
-                <path d="M12 18 l3 -5 l3 4 z" fill="#fff" />
-                <path d="M34 18 l-4 -8 l-4 6 z" fill="#e07b3a" />
-                <path d="M32 18 l-3 -5 l-3 4 z" fill="#fff" />
-                {/* face */}
-                <path d="M22 14 q-10 0 -10 10 q0 8 10 12 q10 -4 10 -12 q0 -10 -10 -10 z" fill="#e07b3a" />
-                <ellipse cx="22" cy="24" rx="6" ry="5" fill="#fff" />
-                {/* eyes */}
-                <circle cx="17" cy="22" r="1.3" fill="#1f1b16" />
-                <circle cx="27" cy="22" r="1.3" fill="#1f1b16" />
+                {/* ears — 单独 group，触发抽动动画 */}
+                <g className="fox-ears" style={{ animationDelay: earDelay }}>
+                    <path d="M10 18 l4 -8 l4 6 z" fill="#e07b3a" stroke="var(--ink, #1f1b16)" strokeWidth="1.2" strokeLinejoin="round" />
+                    <path d="M12 18 l3 -5 l3 4 z" fill="#fff" />
+                    <path d="M34 18 l-4 -8 l-4 6 z" fill="#e07b3a" stroke="var(--ink, #1f1b16)" strokeWidth="1.2" strokeLinejoin="round" />
+                    <path d="M32 18 l-3 -5 l-3 4 z" fill="#fff" />
+                </g>
+                {/* face — 脸型略圆润 */}
+                <path
+                    d="M22 13 q-11 0 -11 11 q0 9 11 12 q11 -3 11 -12 q0 -11 -11 -11 z"
+                    fill="#e07b3a"
+                    stroke="var(--ink, #1f1b16)"
+                    strokeWidth="1.4"
+                    strokeLinejoin="round"
+                />
+                <ellipse cx="22" cy="24" rx="7" ry="5.5" fill="#fff" />
+                {/* eyes — 单独 group，触发眨眼动画 */}
+                <g className="fox-eyes" style={{ animationDelay: blinkDelay }}>
+                    <circle cx="17" cy="22" r="1.5" fill="#1f1b16" />
+                    <circle cx="17" cy="21.5" r="0.5" fill="#fff" />
+                    <circle cx="27" cy="22" r="1.5" fill="#1f1b16" />
+                    <circle cx="27" cy="21.5" r="0.5" fill="#fff" />
+                </g>
                 {/* nose */}
                 <ellipse cx="22" cy="27" rx="1.4" ry="1" fill="#1f1b16" />
             </g>
@@ -699,6 +728,127 @@ function RestActivity({ activity }: { activity: RestActivity }) {
 }
 
 /* ─────────────────────────────────────────────────────────
+ *  AgentHoverCard — 跟随光标的详情卡片（替代旧 fox-tooltip）
+ *  - 1s 延迟出现
+ *  - 显示名字 / 状态 / 当前任务 / 最后活跃 / 到期时间
+ * ──────────────────────────────────────────────────────── */
+function AgentHoverCard({ agent, pos }: { agent: Agent; pos: { x: number; y: number } | null }) {
+    const { t } = useTranslation();
+    const expiresLabel = formatExpiresAt(agent.expires_at);
+    const lastActive = agent.last_active_at
+        ? new Date(agent.last_active_at).toLocaleString()
+        : null;
+    const roleText = (agent.role_description || '').slice(0, 80) || t('myCompany.noRole', '通用');
+    return (
+        <div
+            className="agent-hover-card"
+            style={{ left: `${pos?.x ?? 0}px`, top: `${pos?.y ?? 0}px` }}
+            role="tooltip"
+        >
+            <div className="agent-hover-card__name">{agent.name}</div>
+            <div className="agent-hover-card__row">
+                <span className="agent-hover-card__label">{t('myCompany.card.status', '状态')}</span>
+                <span className="agent-hover-card__value">
+                    {t(`myCompany.${badgeKey(agent)}`, agent.status)}
+                </span>
+            </div>
+            <div className="agent-hover-card__row">
+                <span className="agent-hover-card__label">{t('myCompany.card.role', '角色')}</span>
+                <span className="agent-hover-card__value">{roleText}</span>
+            </div>
+            {lastActive && (
+                <div className="agent-hover-card__row">
+                    <span className="agent-hover-card__label">{t('myCompany.card.lastActive', '最近活跃')}</span>
+                    <span className="agent-hover-card__value">{lastActive}</span>
+                </div>
+            )}
+            {expiresLabel && (
+                <div className="agent-hover-card__row">
+                    <span className="agent-hover-card__label">{t('myCompany.card.expires', '到期')}</span>
+                    <span className="agent-hover-card__value agent-hover-card__value--mono">{expiresLabel}</span>
+                </div>
+            )}
+        </div>
+    );
+}
+
+/* ─────────────────────────────────────────────────────────
+ *  ContextMenu — 右键狐狸弹出的快捷操作菜单
+ *  - 三项：发送消息 / 查看详情 / 切换状态
+ * ──────────────────────────────────────────────────────── */
+function ContextMenu({
+    pos,
+    agent,
+    onClose,
+    onAction,
+}: {
+    pos: { x: number; y: number };
+    agent: Agent;
+    onClose: () => void;
+    onAction: (action: 'message' | 'detail' | 'status') => void;
+}) {
+    const { t } = useTranslation();
+    return (
+        <div
+            className="agent-context-menu"
+            style={{ left: `${pos.x}px`, top: `${pos.y}px` }}
+            onClick={(e) => e.stopPropagation()}
+        >
+            <button
+                type="button"
+                className="agent-context-menu__item"
+                onClick={() => { onAction('message'); onClose(); }}
+            >
+                {t('myCompany.menu.message', '发送消息')}
+            </button>
+            <button
+                type="button"
+                className="agent-context-menu__item"
+                onClick={() => { onAction('detail'); onClose(); }}
+            >
+                {t('myCompany.menu.detail', '查看详情')}
+            </button>
+            <button
+                type="button"
+                className="agent-context-menu__item"
+                onClick={() => { onAction('status'); onClose(); }}
+            >
+                {t('myCompany.menu.toggleStatus', '切换状态')}
+            </button>
+        </div>
+    );
+}
+
+/* ─────────────────────────────────────────────────────────
+ *  AmbientLayer — 环境氛围层（光斑 / 尘埃 / 窗外云）
+ *  位置：场景底层，绝对定位、pointer-events: none
+ *  性能：纯 CSS animation，零 JS 状态
+ * ──────────────────────────────────────────────────────── */
+function AmbientLayer() {
+    return (
+        <div className="ambient-layer" aria-hidden>
+            {/* 工作区光斑 — 暗示显示器光晕洒在空气里 */}
+            <span className="ambient-speck ambient-speck--1" />
+            <span className="ambient-speck ambient-speck--2" />
+            <span className="ambient-speck ambient-speck--3" />
+            <span className="ambient-speck ambient-speck--4" />
+            {/* 空气尘埃 — 整场随机飘浮 */}
+            <span className="ambient-dust ambient-dust--1" />
+            <span className="ambient-dust ambient-dust--2" />
+            <span className="ambient-dust ambient-dust--3" />
+            <span className="ambient-dust ambient-dust--4" />
+            <span className="ambient-dust ambient-dust--5" />
+            <span className="ambient-dust ambient-dust--6" />
+            {/* 窗外云 — 在 office 区域右侧上方慢慢飘过 */}
+            <div className="ambient-clouds">
+                <span className="ambient-cloud ambient-cloud--1" />
+                <span className="ambient-cloud ambient-cloud--2" />
+            </div>
+        </div>
+    );
+}
+
+/* ─────────────────────────────────────────────────────────
  *  Page
  * ──────────────────────────────────────────────────────── */
 export default function MyCompany() {
@@ -720,6 +870,30 @@ export default function MyCompany() {
     const prevZonesRef = useRef<Map<string, Zone>>(new Map());
     const [moving, setMoving] = useState<Set<string>>(new Set());
     const [hovered, setHovered] = useState<string | null>(null);
+    const [hoverPos, setHoverPos] = useState<{ x: number; y: number } | null>(null);
+
+    // 过滤 / 交互状态
+    const [zoneFilter, setZoneFilter] = useState<Zone | null>(null);
+    const [contextMenu, setContextMenu] = useState<{ x: number; y: number; agent: Agent } | null>(null);
+
+    // 入场动画：第一次挂载时把狐狸放屏幕外左侧，setTimeout 后切到真实位置触发 transition
+    const [hasEntered, setHasEntered] = useState(false);
+    useEffect(() => {
+        const id = window.setTimeout(() => setHasEntered(true), 60);
+        return () => window.clearTimeout(id);
+    }, []);
+
+    // 全局点击 / 滚动关闭右键菜单
+    useEffect(() => {
+        if (!contextMenu) return;
+        const close = () => setContextMenu(null);
+        window.addEventListener('click', close);
+        window.addEventListener('scroll', close, true);
+        return () => {
+            window.removeEventListener('click', close);
+            window.removeEventListener('scroll', close, true);
+        };
+    }, [contextMenu]);
 
     // 休息区活动切换的全局 tick：每隔一段时间大家一起换动作。
     // 14 秒一个 tick，配合 pickRestActivity 的 hash 偏移，让所有员工错开活动。
@@ -820,6 +994,12 @@ export default function MyCompany() {
         return { working, resting, standby };
     }, [agents]);
 
+    // 应用过滤：仅按 zone（点 zone 标签）
+    const filteredPlacements = useMemo(() => {
+        if (!zoneFilter) return placements;
+        return placements.filter((p) => p.zone === zoneFilter);
+    }, [placements, zoneFilter]);
+
     // 把 work 区的 agent 按工位索引映射（0-7），渲染工位时按索引取 agent
     const workAgentsByIndex = useMemo(() => {
         const map = new Map<number, Agent>();
@@ -842,11 +1022,58 @@ export default function MyCompany() {
                     a.id === id && a.status !== 'running' ? { ...a, status: 'running' as const } : a,
                 );
             });
+            // 标记"刚进入对话的 agent"，回 MyCompany 时会被 reset 回 idle
+            // （后端 chat WebSocket 只更新 last_active_at 不动 status，所以前端要主动收尾）
+            try {
+                sessionStorage.setItem('myCompany.lastChatAgentId', id);
+            } catch { /* sessionStorage 不可用时静默忽略 */ }
             queryClient.invalidateQueries({ queryKey: ['agents-for-my-company', tenantId] });
             navigate(`/agents/${id}/chat`);
         },
         [navigate, queryClient, tenantId],
     );
+
+    // 路由切换检测：从 /agents/:id/chat 返回 /my-company 时，把对应 agent 乐观 reset 为 idle
+    // 之后狐狸会按"5 分钟宽限期"逻辑（last_active_at 在 5 分钟内）继续在 work，
+    // 5 分钟后切到 rest —— 与既有设计保持一致
+    const location = useLocation();
+    const prevPathRef = useRef<string | null>(null);
+    useEffect(() => {
+        const prev = prevPathRef.current;
+        prevPathRef.current = location.pathname;
+        if (location.pathname !== '/my-company') return;
+        // 首次挂载 / 本来就在 /my-company → 不触发
+        if (prev === null || prev === '/my-company') return;
+
+        let lastChatId: string | null = null;
+        try {
+            lastChatId = sessionStorage.getItem('myCompany.lastChatAgentId');
+            if (lastChatId) sessionStorage.removeItem('myCompany.lastChatAgentId');
+        } catch { return; }
+        if (!lastChatId) return;
+
+        queryClient.setQueryData<Agent[]>(['agents-for-my-company', tenantId], (old) => {
+            if (!old) return old;
+            return old.map((a) =>
+                a.id === lastChatId && a.status === 'running' ? { ...a, status: 'idle' as const } : a,
+            );
+        });
+    }, [location.pathname, queryClient, tenantId]);
+
+    // hover 卡片：1s 延迟后显示
+    const [hoverShown, setHoverShown] = useState(false);
+    useEffect(() => {
+        if (!hovered) {
+            setHoverShown(false);
+            return;
+        }
+        const id = window.setTimeout(() => setHoverShown(true), 1000);
+        return () => window.clearTimeout(id);
+    }, [hovered]);
+    const hoveredAgent = useMemo(() => {
+        if (!hovered || !hoverShown) return null;
+        return agents.find((a) => a.id === hovered) || null;
+    }, [agents, hovered, hoverShown]);
 
     const isEmpty = !isLoading && agents.length === 0;
 
@@ -885,10 +1112,18 @@ export default function MyCompany() {
                     </button>
                 </div>
             ) : (
+                <>
                 <div className="my-company-scene" role="img" aria-label="Office scene">
                     {/* Decorative backdrops for each zone */}
                     <div className="my-company-zone my-company-zone--office">
-                        <span className="my-company-zone-label">{t('myCompany.office')}</span>
+                        <button
+                            type="button"
+                            className={`my-company-zone-label my-company-zone-label--clickable${zoneFilter === 'office' ? ' is-active' : ''}`}
+                            onClick={() => setZoneFilter(zoneFilter === 'office' ? null : 'office')}
+                            title={t('myCompany.zoneFilterHint', '点击只看该区域')}
+                        >
+                            {t('myCompany.office')}
+                        </button>
                         {zoneSlots.office.map((s, i) => (
                             <div
                                 key={`chair-${i}`}
@@ -918,7 +1153,14 @@ export default function MyCompany() {
                         ))}
                     </div>
                     <div className="my-company-zone my-company-zone--work">
-                        <span className="my-company-zone-label">{t('myCompany.workArea')}</span>
+                        <button
+                            type="button"
+                            className={`my-company-zone-label my-company-zone-label--clickable${zoneFilter === 'work' ? ' is-active' : ''}`}
+                            onClick={() => setZoneFilter(zoneFilter === 'work' ? null : 'work')}
+                            title={t('myCompany.zoneFilterHint', '点击只看该区域')}
+                        >
+                            {t('myCompany.workArea')}
+                        </button>
                         {zoneSlots.work.map((s, i) => (
                             <Workstation
                                 key={`ws-${i}`}
@@ -928,51 +1170,116 @@ export default function MyCompany() {
                         ))}
                     </div>
                     <div className="my-company-zone my-company-zone--rest">
-                        <span className="my-company-zone-label">{t('myCompany.restArea')}</span>
-                    </div>
-                    <div className="my-company-zone my-company-zone--standby">
-                        <span className="my-company-zone-label">{t('myCompany.standby')}</span>
-                    </div>
-
-                    {/* Agents */}
-                    {placements.map((p) => (
                         <button
                             type="button"
-                            key={p.agent.id}
-                            className={`fox-agent fox-agent--${p.zone} fox-agent--${p.pose}`}
-                            style={{ left: `${p.slot.left}%`, top: `${p.slot.top}%` }}
-                            onClick={() => onAgentClick(p.agent.id)}
-                            onMouseEnter={() => setHovered(p.agent.id)}
-                            onMouseLeave={() => setHovered((h) => (h === p.agent.id ? null : h))}
-                            onFocus={() => setHovered(p.agent.id)}
-                            onBlur={() => setHovered((h) => (h === p.agent.id ? null : h))}
-                            aria-label={`${p.agent.name} — ${p.agent.status}`}
+                            className={`my-company-zone-label my-company-zone-label--clickable${zoneFilter === 'rest' ? ' is-active' : ''}`}
+                            onClick={() => setZoneFilter(zoneFilter === 'rest' ? null : 'rest')}
+                            title={t('myCompany.zoneFilterHint', '点击只看该区域')}
                         >
-                            <Fox pose={p.pose} name={p.agent.name} />
-                            <StatusBadge agent={p.agent} />
-                            {p.zone === 'rest' && p.restActivity ? (
-                                <RestActivity activity={p.restActivity} />
-                            ) : null}
-                            {p.tooltipVisible && (() => {
-                                const expiresLabel = formatExpiresAt(p.agent.expires_at);
-                                const showExpires = p.zone === 'standby' && expiresLabel;
-                                return (
-                                    <span className="fox-tooltip" role="tooltip">
-                                        <span className="fox-tooltip-name">{p.agent.name}</span>
-                                        <span className="fox-tooltip-status">
-                                            {t(`myCompany.${badgeKey(p.agent)}`, p.agent.status)}
-                                        </span>
-                                        {showExpires && (
-                                            <span className="fox-tooltip-expires">
-                                                {t('myCompany.expiredOn', '到期: {date}', { date: expiresLabel })}
-                                            </span>
-                                        )}
-                                    </span>
-                                );
-                            })()}
+                            {t('myCompany.restArea')}
                         </button>
-                    ))}
+                    </div>
+                    <div className="my-company-zone my-company-zone--standby">
+                        <button
+                            type="button"
+                            className={`my-company-zone-label my-company-zone-label--clickable${zoneFilter === 'standby' ? ' is-active' : ''}`}
+                            onClick={() => setZoneFilter(zoneFilter === 'standby' ? null : 'standby')}
+                            title={t('myCompany.zoneFilterHint', '点击只看该区域')}
+                        >
+                            {t('myCompany.standby')}
+                        </button>
+                    </div>
+
+                    {/* 环境氛围：光斑 / 尘埃 / 窗外云 */}
+                    <AmbientLayer />
+
+                    {/* Agents */}
+                    {filteredPlacements.map((p, idx) => {
+                        // 入场前：放在屏幕外左侧
+                        // 入场后：放真实 slot
+                        const displaySlot = hasEntered
+                            ? p.slot
+                            : { left: -15, top: 80 + (idx % 4) * 4 };
+                        const enterDelay = hasEntered ? 0 : idx * 60;
+                        const agentClass = [
+                            'fox-agent',
+                            `fox-agent--${p.zone}`,
+                            `fox-agent--${p.pose}`,
+                            p.zone === 'work' && p.agent.status === 'running' ? 'fox-agent--typing' : '',
+                            p.zone === 'work' && p.agent.status === 'running' && isOffline(p.agent) ? 'fox-agent--offline' : '',
+                            p.agent.status === 'error' ? 'fox-agent--error' : '',
+                        ].filter(Boolean).join(' ');
+                        return (
+                            <button
+                                type="button"
+                                key={p.agent.id}
+                                className={agentClass}
+                                style={{
+                                    left: `${displaySlot.left}%`,
+                                    top: `${displaySlot.top}%`,
+                                    transitionDelay: `${enterDelay}ms`,
+                                }}
+                                onClick={() => onAgentClick(p.agent.id)}
+                                onMouseEnter={(e) => {
+                                    setHovered(p.agent.id);
+                                    setHoverPos({ x: e.clientX, y: e.clientY });
+                                }}
+                                onMouseMove={(e) => setHoverPos({ x: e.clientX, y: e.clientY })}
+                                onMouseLeave={() => {
+                                    setHovered((h) => (h === p.agent.id ? null : h));
+                                    setHoverPos(null);
+                                }}
+                                onFocus={(e) => {
+                                    setHovered(p.agent.id);
+                                    const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                                    setHoverPos({ x: r.left + r.width / 2, y: r.top });
+                                }}
+                                onBlur={() => {
+                                    setHovered((h) => (h === p.agent.id ? null : h));
+                                    setHoverPos(null);
+                                }}
+                                onContextMenu={(e) => {
+                                    e.preventDefault();
+                                    setContextMenu({ x: e.clientX, y: e.clientY, agent: p.agent });
+                                }}
+                                aria-label={`${p.agent.name} — ${p.agent.status}`}
+                            >
+                                <Fox pose={p.pose} name={p.agent.name} agentId={p.agent.id} />
+                                <StatusBadge agent={p.agent} />
+                                {p.zone === 'rest' && p.restActivity ? (
+                                    <RestActivity activity={p.restActivity} />
+                                ) : null}
+                            </button>
+                        );
+                    })}
+
+                    {/* Hover detail card — single instance, 1s delay */}
+                    {hoveredAgent && hoverPos && (
+                        <AgentHoverCard agent={hoveredAgent} pos={hoverPos} />
+                    )}
+
+                    {/* Context menu */}
+                    {contextMenu && (
+                        <ContextMenu
+                            pos={contextMenu}
+                            agent={contextMenu.agent}
+                            onClose={() => setContextMenu(null)}
+                            onAction={(action) => {
+                                if (action === 'message') onAgentClick(contextMenu.agent.id);
+                                else if (action === 'detail') navigate(`/agents/${contextMenu.agent.id}`);
+                                else if (action === 'status') {
+                                    const next = contextMenu.agent.status === 'running' ? 'idle' : 'running';
+                                    queryClient.setQueryData<Agent[]>(['agents-for-my-company', tenantId], (old) => {
+                                        if (!old) return old;
+                                        return old.map((a) => a.id === contextMenu.agent.id ? { ...a, status: next as any } : a);
+                                    });
+                                    queryClient.invalidateQueries({ queryKey: ['agents-for-my-company', tenantId] });
+                                }
+                            }}
+                        />
+                    )}
                 </div>
+                </>
             )}
         </div>
     );

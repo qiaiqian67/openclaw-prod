@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import ConfirmModal from '../../components/ConfirmModal';
 import { useDialog } from '../../components/Dialog/DialogProvider';
 import { useToast } from '../../components/Toast/ToastProvider';
+import { IconButton } from '../../components/ui/IconButton';
 import type { FileBrowserApi } from '../../components/FileBrowser';
 import FileBrowser from '../../components/FileBrowser';
 import MarkdownRenderer from '../../components/MarkdownRenderer';
@@ -1484,9 +1485,10 @@ function RelationshipEditor({ agentId, readOnly = false }: { agentId: string; re
         try {
             await fetchAuth(`/agents/${agentId}/relationships/${relId}`, { method: 'DELETE' });
             refetch();
-        } catch {
+        } catch (e: any) {
             setDeletingIds(prev => { const s = new Set(prev); s.delete(relId); return s; });
             refetch();
+            toast.error(t('common.error.deleteFailed', 'Delete failed'), { details: String(e?.message || e) });
         } finally {
             setDeletingIds(prev => { const s = new Set(prev); s.delete(relId); return s; });
         }
@@ -1527,9 +1529,10 @@ function RelationshipEditor({ agentId, readOnly = false }: { agentId: string; re
         try {
             await fetchAuth(`/agents/${agentId}/relationships/agents/${relId}`, { method: 'DELETE' });
             refetchAgentRels();
-        } catch {
+        } catch (e: any) {
             setDeletingIds(prev => { const s = new Set(prev); s.delete(relId); return s; });
             refetchAgentRels();
+            toast.error(t('common.error.deleteFailed', 'Delete failed'), { details: String(e?.message || e) });
         } finally {
             setDeletingIds(prev => { const s = new Set(prev); s.delete(relId); return s; });
         }
@@ -2012,8 +2015,9 @@ export default function AgentDetailPage() {
         try {
             await agentApi.update(id, { primary_model_id: newModelId });
             queryClient.invalidateQueries({ queryKey: ['agent', id] });
-        } catch {
+        } catch (e: any) {
             setOverrideModelId(agent?.primary_model_id || null);
+            toast.error(t('common.error.saveFailed', 'Save failed'), { details: String(e?.message || e) });
         }
     }, [id, agent?.primary_model_id, (agent as any)?.access_level, queryClient]);
 
@@ -2338,7 +2342,9 @@ export default function AgentDetailPage() {
                 if (!silent && currentAgentIdRef.current === agentId) setSessionsLoading(false);
                 return data;
             }
-        } catch { }
+        } catch (e: any) {
+            if (!silent) toast.error(t('agent.chat.sessionLoadFailed', 'Failed to load sessions'), { details: String(e?.message || e) });
+        }
         if (!silent && currentAgentIdRef.current === agentId) setSessionsLoading(false);
         return [];
     };
@@ -2361,8 +2367,9 @@ export default function AgentDetailPage() {
                     console.warn('[chat] scope=all sessions forbidden (need org/platform/agent admin)');
                 }
             }
-        } catch {
+        } catch (e: any) {
             if (currentAgentIdRef.current === id) setAllSessions([]);
+            toast.error(t('agent.chat.sessionLoadFailed', 'Failed to load sessions'), { details: String(e?.message || e) });
         } finally {
             setAllSessionsLoading(false);
         }
@@ -3904,7 +3911,7 @@ export default function AgentDetailPage() {
         e.preventDefault();
         const allowedFiles = filesToUpload.slice(0, 10 - attachedFiles.length);
         if (!allowedFiles.length) {
-            toast.warning('最多可附加 10 个文件');
+            toast.warning(t('agent.chat.maxAttachmentReached', '最多可附加 10 个文件'));
             return;
         }
 
@@ -6538,15 +6545,16 @@ export default function AgentDetailPage() {
                                                                 <span className="stop-icon" />
                                                             </button>
                                                         ) : (
-                                                            <button
-                                                                type="button"
+                                                            <IconButton
+                                                                aria-label={t('chat.send', 'Send')}
                                                                 className="btn btn-primary chat-composer-send"
+                                                                variant="primary"
                                                                 onClick={sendChatMsg}
                                                                 disabled={showNoModelState || !wsConnected || (!chatInput.trim() && attachedFiles.length === 0)}
-                                                                title={t('chat.send')}
+                                                                title={t('chat.send', 'Send')}
                                                             >
                                                                 <IconSend size={16} stroke={1.75} />
-                                                            </button>
+                                                            </IconButton>
                                                         )}
                                                     </div>
                                                 </div>

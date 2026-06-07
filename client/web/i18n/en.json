@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "DeerClaw",
-    "tagline": "Enterprise Digital Employee Platform"
+    "tagline": "Enterprise Digital Employee Platform",
+    "desktopBrandTitle": "DeerClaw Desktop"
   },
   "login": {
     "hero": {
@@ -46,7 +47,12 @@
     "topContributors": "Top Contributors",
     "trendingTags": "Trending Topics",
     "tips": "Tips",
-    "justNow": "just now"
+    "justNow": "just now",
+    "deleteConfirmTitle": "Delete Post",
+    "deleteConfirmMessage": "Are you sure you want to delete this post? This action cannot be undone.",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "deletePost": "Delete post"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -59,7 +65,9 @@
     "language": "Language",
     "plaza": "Plaza",
     "okr": "OKR",
-    "myCompany": "My Company"
+    "myCompany": "My Company",
+    "adminCompanies": "Company Management",
+    "platformSettings": "Platform Settings"
   },
   "myCompany": {
     "title": "My Company",
@@ -82,7 +90,36 @@
     "statsWorking": "Working",
     "statsResting": "Resting",
     "statsExpired": "Standby",
-    "expiredOn": "Expired: {date}"
+    "expiredOn": "Expired: {date}",
+    "zoneFilterHint": "Click to filter to this zone",
+    "noRole": "General",
+    "card": {
+      "status": "Status",
+      "role": "Role",
+      "lastActive": "Last active",
+      "expires": "Expires"
+    },
+    "menu": {
+      "message": "Send message",
+      "detail": "View details",
+      "toggleStatus": "Toggle status"
+    },
+    "toolbar": {
+      "searchPlaceholder": "Search employee name…",
+      "searchAria": "Search employees",
+      "statusAria": "Filter by status",
+      "zoneAria": "Filter by zone",
+      "allStatuses": "All statuses",
+      "allZones": "All zones",
+      "clear": "Clear filters"
+    },
+    "statusLabel": {
+      "running": "Running",
+      "idle": "Idle",
+      "stopped": "Stopped",
+      "error": "Error",
+      "creating": "Onboarding"
+    }
   },
   "talentMarket": {
     "title": "Talent Market",
@@ -131,6 +168,8 @@
     "sendResetLink": "Send reset link",
     "rememberedPassword": "Remembered your password?",
     "backToLogin": "Back to login",
+    "serverSettingsTitle": "Server Settings",
+    "serverSettingsSubtitle": "Configure backend API, WebSocket and update server URLs.",
     "resetPasswordTitle": "Reset password",
     "resetPasswordSubtitle": "Choose a new password for your account.",
     "resetPasswordMissingToken": "Reset token is missing from the link.",
@@ -463,7 +502,9 @@
       "provider": "Provider",
       "toolName": "Tool",
       "inProgress": "In progress",
-      "done": "Done"
+      "done": "Done",
+      "sessionLoadFailed": "Failed to load sessions",
+      "maxAttachmentReached": "You can attach up to 10 files"
     },
     "activityLog": {
       "title": "Activity Log",
@@ -591,7 +632,12 @@
           "America/Sao_Paulo": "America/Sao_Paulo (Brasilia Time, UTC-3)",
           "Australia/Sydney": "Australia/Sydney (Australian Eastern Time, UTC+10/+11)",
           "Pacific/Auckland": "Pacific/Auckland (New Zealand Time, UTC+12/+13)"
-        }
+        },
+        "title": "Timezone",
+        "current": "Agent Timezone",
+        "override": "Custom timezone for this agent",
+        "inherited": "Using company default timezone",
+        "default": "↩ Company default"
       },
       "approvals": {
         "title": "Approvals",
@@ -616,6 +662,20 @@
         "description": "Greeting message sent automatically when a user starts a new web conversation. Supports Markdown. Leave empty to disable.",
         "saved": "Saved",
         "placeholder": "e.g. Hello! I'm your AI assistant. How can I help you?"
+      },
+      "maxToolRounds": "Max Tool Call Rounds",
+      "maxToolRoundsLabel": "Maximum rounds per message",
+      "maxToolRoundsDesc": "How many tool-calling rounds the agent can perform per message (search, write, etc). Default: 50",
+      "heartbeat": {
+        "title": "Heartbeat",
+        "description": "Periodic awareness check — agent proactively monitors the plaza and work environment.",
+        "enabled": "Enable Heartbeat",
+        "enabledDesc": "Agent will periodically check plaza and work status",
+        "interval": "Check Interval",
+        "intervalDesc": "How often the agent checks for updates",
+        "activeHours": "Active Hours",
+        "activeHoursDesc": "Only trigger heartbeat during these hours (HH:MM-HH:MM)",
+        "lastRun": "Last heartbeat"
       }
     },
     "tools": {
@@ -873,7 +933,12 @@
       "department": "Department",
       "departmentDesc": "Only selected department members can use",
       "selfOnly": "Self Only",
-      "selfOnlyDesc": "Only the creator can use"
+      "selfOnlyDesc": "Only the creator can use",
+      "accessLevel": "Default Access Level",
+      "useLevel": "Use",
+      "useDesc": "Can use Task, Chat, Tools, Skills, Workspace",
+      "manageLevel": "Manage",
+      "manageDesc": "Full access including Settings, Mind, Relationships"
     },
     "step5": {
       "title": "Feishu Bot Configuration (Optional)",
@@ -1111,6 +1176,7 @@
       "agentInstalledHint": "Agent installed tools via `import_mcp_server`. Deleting removes the tool from that agent.",
       "noAgentInstalledTools": "No agent-installed tools yet.",
       "removeFromAgent": "Remove \"{{name}}\" from agent?",
+      "removeFailedRefresh": "Tool already removed, refreshing the list",
       "delete": "Delete",
       "addMcpServer": "Add MCP Server",
       "mcpServer": "MCP Server",
@@ -1377,7 +1443,8 @@
       "edit": "Edit",
       "cancel": "Cancel",
       "viewFile": "View File",
-      "confirmDelete": "Confirm Delete"
+      "confirmDelete": "Confirm Delete",
+      "description": "Shared files accessible to all agents via enterprise_info/ directory."
     },
     "audit": {
       "title": "Audit Log",
@@ -1708,7 +1775,16 @@
     "type": "Type",
     "never": "Never",
     "model": "Model",
-    "managedBy": "Managed by OpenClaw"
+    "managedBy": "Managed by OpenClaw",
+    "nativeDesc": "Full agent running on DeerClaw platform",
+    "openclawTitle": "Link OpenClaw",
+    "nativeTitle": "Platform Hosted",
+    "openclawDesc": "Connect your existing OpenClaw agent",
+    "basicTitle": "Link OpenClaw Agent",
+    "basicDesc": "Give your OpenClaw agent a name and description. The LLM model, personality, and skills are configured on your OpenClaw instance.",
+    "namePlaceholder": "e.g. My OpenClaw Bot",
+    "rolePlaceholder": "e.g. Personal assistant running on my Mac",
+    "createBtn": "Link Agent"
   },
   "channelGuide": {
     "setupGuide": "Setup Guide",
@@ -1783,7 +1859,8 @@
       "step4": "Set message receiving mode to Stream (recommended, no public IP needed)",
       "step5": "Paste AppKey and AppSecret above → click Save Config",
       "step6": "Publish the app → find the bot in DingTalk and send a test message",
-      "note": "Stream mode requires no public IP or callback URL. Only AppKey and AppSecret are needed."
+      "note": "Stream mode requires no public IP or callback URL. Only AppKey and AppSecret are needed.",
+      "agentIdPlaceholder": "DingTalk app AgentId (optional)"
     },
     "wecom": {
       "step1": "Log in to work.weixin.qq.com → App Management → Self-Built Apps → Create App",
@@ -2088,5 +2165,8 @@
     "selectLoginMethod": "Select your login method",
     "loginWith": "Login with {{provider}}",
     "noProviders": "No SSO providers configured."
+  },
+  "onboarding": {
+    "completeFailed": "Failed to complete onboarding"
   }
 }

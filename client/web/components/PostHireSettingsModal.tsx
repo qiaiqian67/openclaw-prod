@@ -6,6 +6,7 @@ import { IconAlertTriangle, IconSettings, IconX } from '@tabler/icons-react';
 import { agentApi, authApi, enterpriseApi, tenantApi } from '../services/api';
 import { translateTemplate } from '../i18n/templateTranslations';
 import { useDialog } from './Dialog/DialogProvider';
+import { IconButton } from './ui/IconButton';
 
 interface Template {
     id: string;
@@ -186,9 +187,9 @@ export default function PostHireSettingsModal({ template, open, onClose, onDone 
                             {template.name}
                         </p>
                     </div>
-                    <button onClick={onClose} className="btn btn-ghost" disabled={busy} style={{ padding: '4px' }}>
+                    <IconButton aria-label={t('common.close', 'Close')} onClick={onClose} disabled={busy} size="sm">
                         <IconX size={16} stroke={1.5} />
-                    </button>
+                    </IconButton>
                 </div>
 
                 <div style={{ padding: '8px 26px 8px', display: 'flex', flexDirection: 'column', gap: '18px' }}>

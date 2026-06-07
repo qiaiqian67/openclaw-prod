@@ -6,6 +6,7 @@ import { agentApi } from '../services/api';
 import PostHireSettingsModal from './PostHireSettingsModal';
 import CustomAgentModal from './CustomAgentModal';
 import { translateTemplate } from '../i18n/templateTranslations';
+import { IconButton } from './ui/IconButton';
 import customAgentBackground from '../assets/talent-market/custom-agent-botanical.png';
 
 interface Template {
@@ -177,14 +178,14 @@ export default function TalentMarketModal({ open, onClose }: Props) {
                             </button>
                         )}
                     </div>
-                    <button
+                    <IconButton
+                        aria-label={t('common.close', 'Close')}
                         onClick={onClose}
-                        className="btn btn-ghost"
-                        style={{ padding: '4px', display: 'flex', alignItems: 'center' }}
+                        size="sm"
                         title={t('common.close', 'Close')}
                     >
                         <IconX size={18} stroke={1.5} />
-                    </button>
+                    </IconButton>
                 </div>
 
                 {/* Category tabs */}

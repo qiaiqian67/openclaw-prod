@@ -5,6 +5,7 @@
  */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { IconButton } from './ui/IconButton';
 import {
     IconDownload,
     IconPlus,
@@ -321,26 +322,26 @@ export const MarkdownRenderer = React.memo(function MarkdownRenderer({ content, 
             {lightbox && createPortal(
                 <div className="markdown-image-lightbox" onClick={closeLightbox}>
                     <div className="markdown-image-lightbox__toolbar" onClick={(event) => event.stopPropagation()}>
-                        <button type="button" className="markdown-image-lightbox__btn" onClick={zoomOut} title="Zoom out">
+                        <IconButton aria-label="Zoom out" className="markdown-image-lightbox__btn" onClick={zoomOut} title="Zoom out">
                             <IconMinus size={16} stroke={1.9} />
-                        </button>
-                        <button type="button" className="markdown-image-lightbox__btn" onClick={zoomIn} title="Zoom in">
+                        </IconButton>
+                        <IconButton aria-label="Zoom in" className="markdown-image-lightbox__btn" onClick={zoomIn} title="Zoom in">
                             <IconPlus size={16} stroke={1.9} />
-                        </button>
-                        <button type="button" className="markdown-image-lightbox__btn" onClick={resetZoom} title="Reset zoom">
+                        </IconButton>
+                        <IconButton aria-label="Reset zoom" className="markdown-image-lightbox__btn" onClick={resetZoom} title="Reset zoom">
                             <IconRefresh size={16} stroke={1.9} />
-                        </button>
-                        <button
-                            type="button"
+                        </IconButton>
+                        <IconButton
+                            aria-label="Download image"
                             className="markdown-image-lightbox__btn"
                             onClick={() => triggerImageDownload(lightbox.src, lightbox.alt)}
                             title="Download image"
                         >
                             <IconDownload size={16} stroke={1.9} />
-                        </button>
-                        <button type="button" className="markdown-image-lightbox__btn" onClick={closeLightbox} title="Close preview">
+                        </IconButton>
+                        <IconButton aria-label="Close preview" className="markdown-image-lightbox__btn" onClick={closeLightbox} title="Close preview">
                             <IconX size={16} stroke={1.9} />
-                        </button>
+                        </IconButton>
                     </div>
                     <div className="markdown-image-lightbox__stage" onClick={(event) => event.stopPropagation()}>
                         <img

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { IconButton } from './ui/IconButton';
 import {
     IconAlertTriangle,
     IconCheck,
@@ -232,9 +233,9 @@ export default function CustomAgentModal({ open, initialMode = 'native', onClose
                                         : t('customAgentModal.externalSubtitle')}
                                 </p>
                             </div>
-                            <button onClick={onClose} className="btn btn-ghost" disabled={busy} style={{ padding: '4px', display: 'flex' }}>
+                            <IconButton aria-label={t('common.close', 'Close')} onClick={onClose} disabled={busy} size="sm">
                                 <IconX size={16} stroke={1.5} />
-                            </button>
+                            </IconButton>
                         </div>
 
                         <div style={{ padding: '0 26px 18px', overflowY: 'auto' }}>
@@ -569,9 +570,9 @@ function ExternalSuccess({
                         </p>
                     </div>
                 </div>
-                <button onClick={onClose} className="btn btn-ghost" style={{ padding: '4px', display: 'flex' }}>
+                <IconButton aria-label={t('common.close', 'Close')} onClick={onClose} size="sm">
                     <IconX size={16} stroke={1.5} />
-                </button>
+                </IconButton>
             </div>
 
             <div style={{ padding: '8px 26px 20px', overflowY: 'auto' }}>
