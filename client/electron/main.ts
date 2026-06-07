@@ -67,6 +67,12 @@ const TRAY_ICON_ALERT_DATA_URL =
   'Hw+upqoBRHkBDaN4gWAgomGQWk5sCYh05xOTkNDwIkL5ACMpIzkbu81YDMHITBh+phYA' +
   'ACsjdcXNnezoAAAAAElFTkSuQmCC';
 
+function getConfiguredFeed(): { provider: 'generic'; url: string } | null {
+  const updateUrl = store.get('updateUrl') as string;
+  if (!updateUrl) return null;
+  return { provider: 'generic', url: updateUrl };
+}
+
 let flashTimer: NodeJS.Timeout | null = null;
 let flashPhase = false;
 
@@ -197,7 +203,19 @@ function createTray() {
       label: '检查更新',
       // Don't trigger the OS notification — let the renderer's UpdateDialog
       // show the download prompt only when an update is actually available.
-      click: () => { autoUpdater.checkForUpdates().catch(() => {}); },
+      // Skip the call entirely if no updateUrl is configured: with no feed
+      // set, autoUpdater falls back to the build-time provider (GitHub) and
+      // 404s on a missing repo. The user can configure the server from the
+      // login screen and try again.
+      click: () => {
+        const feed = getConfiguredFeed();
+        if (!feed) {
+          mainWindow?.webContents.send('updater:error', '未配置更新服务器地址');
+          return;
+        }
+        autoUpdater.setFeedURL(feed);
+        autoUpdater.checkForUpdates().catch(() => {});
+      },
     },
     {
       label: '我要反馈',
@@ -268,6 +286,12 @@ function setupAutoUpdater() {
   });
 
   ipcMain.handle('updater:check', async () => {
+    const feed = getConfiguredFeed();
+    if (!feed) {
+      mainWindow?.webContents.send('updater:error', '未配置更新服务器地址');
+      return null;
+    }
+    autoUpdater.setFeedURL(feed);
     try {
       return await autoUpdater.checkForUpdates();
     } catch { return null; }
@@ -300,13 +324,23 @@ app.whenReady().then(() => {
   setupAutoUpdater();
 
   if (!isDev) {
-    // Defer the startup check so the renderer's useAutoUpdater hook has
-    // time to subscribe to the IPC events. Without this delay the early
-    // 'checking-for-update' / 'update-available' events fire before React
-    // mounts and the UpdateDialog never appears.
-    setTimeout(() => {
-      autoUpdater.checkForUpdates().catch(() => {});
-    }, 3000);
+    // Auto-update is opt-in: only check at startup if the user has
+    // configured a custom `updateUrl` in the login screen. With no
+    // updateUrl the autoUpdater has no feed configured and would 404
+    // on the default provider. The tray's "检查更新" menu and the
+    // UpdateDialog both still work — they trigger a one-shot check
+    // via the same IPC handler.
+    const feed = getConfiguredFeed();
+    if (feed) {
+      // Defer the startup check so the renderer's useAutoUpdater hook has
+      // time to subscribe to the IPC events. Without this delay the early
+      // 'checking-for-update' / 'update-available' events fire before React
+      // mounts and the UpdateDialog never appears.
+      setTimeout(() => {
+        autoUpdater.setFeedURL(feed);
+        autoUpdater.checkForUpdates().catch(() => {});
+      }, 3000);
+    }
   }
 
   app.on('activate', () => {

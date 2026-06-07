@@ -37,8 +37,10 @@ linux:
       arch:
         - x64
   category: Office
-publish:
-  provider: github
-  owner: dataelement
-  repo: DeerClaw
-  releaseType: release
+# Auto-update is opt-in: the user configures `updateUrl` from the login
+# screen and the renderer pushes it to the main process via
+# `updater:setUrl` (which calls `autoUpdater.setFeedURL({ provider: 'generic', ... })`).
+# Leaving `publish` unset keeps the packaged `app-update.yml` from baking in
+# any hardcoded provider URL, so a fresh install with no configured server
+# simply skips the startup update check instead of 404-ing on a dead repo.
+publish: null

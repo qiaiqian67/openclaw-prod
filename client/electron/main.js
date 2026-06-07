@@ -65,6 +65,11 @@ function applyContentSecurityPolicy() {
 }
 var TRAY_ICON_DATA_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAQ0lEQVR4nGNgGAWjYBSMghENGP///8/AwMDw//8fBgYGBob/X0CMRsgwKgaMxhgZGZj///8zMDD8//+fgYGBgYGB4T8DAwMDAwMDhmJgFAAAAABJRU5ErkJggg==";
 var TRAY_ICON_ALERT_DATA_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAmUlEQVR4nGNgIAG8EBEJeyEi8h9E41Uol3KHUy7lTohcyp1qKA6BakTBuDSDNHyRS7nzH4aTPGdiaMbqErmUO4uQNcIwDs2oroDajKGZKBdA/fwFlwG4XIFsewg+zeguAdEgPUQ5Hw+upqoBRHkBDaN4gWAgomGQWk5sCYh05xOTkNDwIkL5ACMpIzkbu81YDMHITBh+phYAACsjdcXNnezoAAAAAElFTkSuQmCC";
+function getConfiguredFeed() {
+  const updateUrl = store.get("updateUrl");
+  if (!updateUrl) return null;
+  return { provider: "generic", url: updateUrl };
+}
 var flashTimer = null;
 var flashPhase = false;
 function startTrayFlash() {
@@ -173,7 +178,17 @@ function createTray() {
       label: "\u68C0\u67E5\u66F4\u65B0",
       // Don't trigger the OS notification — let the renderer's UpdateDialog
       // show the download prompt only when an update is actually available.
+      // Skip the call entirely if no updateUrl is configured: with no feed
+      // set, autoUpdater falls back to the build-time provider (GitHub) and
+      // 404s on a missing repo. The user can configure the server from the
+      // login screen and try again.
       click: () => {
+        const feed = getConfiguredFeed();
+        if (!feed) {
+          mainWindow?.webContents.send("updater:error", "\u672A\u914D\u7F6E\u66F4\u65B0\u670D\u52A1\u5668\u5730\u5740");
+          return;
+        }
+        import_electron_updater.autoUpdater.setFeedURL(feed);
         import_electron_updater.autoUpdater.checkForUpdates().catch(() => {
         });
       }
@@ -236,6 +251,12 @@ function setupAutoUpdater() {
     mainWindow?.webContents.send("updater:error", e.message);
   });
   import_electron.ipcMain.handle("updater:check", async () => {
+    const feed = getConfiguredFeed();
+    if (!feed) {
+      mainWindow?.webContents.send("updater:error", "\u672A\u914D\u7F6E\u66F4\u65B0\u670D\u52A1\u5668\u5730\u5740");
+      return null;
+    }
+    import_electron_updater.autoUpdater.setFeedURL(feed);
     try {
       return await import_electron_updater.autoUpdater.checkForUpdates();
     } catch {
@@ -261,10 +282,14 @@ import_electron.app.whenReady().then(() => {
   setupWindowControls();
   setupAutoUpdater();
   if (!isDev) {
-    setTimeout(() => {
-      import_electron_updater.autoUpdater.checkForUpdates().catch(() => {
-      });
-    }, 3e3);
+    const feed = getConfiguredFeed();
+    if (feed) {
+      setTimeout(() => {
+        import_electron_updater.autoUpdater.setFeedURL(feed);
+        import_electron_updater.autoUpdater.checkForUpdates().catch(() => {
+        });
+      }, 3e3);
+    }
   }
   import_electron.app.on("activate", () => {
     if (import_electron.BrowserWindow.getAllWindows().length === 0) createWindow();
