@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../stores';
@@ -1033,17 +1033,29 @@ export default function MyCompany() {
         [navigate, queryClient, tenantId],
     );
 
-    // 路由切换检测：从 /agents/:id/chat 返回 /my-company 时，把对应 agent 乐观 reset 为 idle
-    // 之后狐狸会按"5 分钟宽限期"逻辑（last_active_at 在 5 分钟内）继续在 work，
+    // 路由切换检测：从 /agents/:id/chat 返回 /my-company(或 /dashboard?view=company)时,
+    // 把对应 agent 乐观 reset 为 idle
+    // 之后狐狸会按"5 分钟宽限期"逻辑(last_active_at 在 5 分钟内)继续在 work,
     // 5 分钟后切到 rest —— 与既有设计保持一致
     const location = useLocation();
+    const [searchParams] = useSearchParams();
+    const isMyCompanyView =
+        location.pathname === '/my-company' ||
+        (location.pathname === '/dashboard' && searchParams.get('view') === 'company');
     const prevPathRef = useRef<string | null>(null);
+    const prevSearchRef = useRef<string | null>(null);
     useEffect(() => {
-        const prev = prevPathRef.current;
+        const prevPath = prevPathRef.current;
+        const prevSearch = prevSearchRef.current;
         prevPathRef.current = location.pathname;
-        if (location.pathname !== '/my-company') return;
-        // 首次挂载 / 本来就在 /my-company → 不触发
-        if (prev === null || prev === '/my-company') return;
+        prevSearchRef.current = location.search;
+        if (!isMyCompanyView) return;
+        // 首次挂载 / 本来就在 my-company 视图 → 不触发
+        if (prevPath === null) return;
+        const wasMyCompanyView =
+            prevPath === '/my-company' ||
+            (prevPath === '/dashboard' && (prevSearch ?? '').includes('view=company'));
+        if (wasMyCompanyView) return;
 
         let lastChatId: string | null = null;
         try {
@@ -1058,7 +1070,7 @@ export default function MyCompany() {
                 a.id === lastChatId && a.status === 'running' ? { ...a, status: 'idle' as const } : a,
             );
         });
-    }, [location.pathname, queryClient, tenantId]);
+    }, [isMyCompanyView, location.pathname, location.search, queryClient, tenantId]);
 
     // hover 卡片：1s 延迟后显示
     const [hoverShown, setHoverShown] = useState(false);
@@ -1106,7 +1118,7 @@ export default function MyCompany() {
                     <button
                         type="button"
                         className="btn btn-primary"
-                        onClick={() => navigate('/')}
+                        onClick={() => navigate('/plaza?view=hire')}
                     >
                         {t('myCompany.hireButton', '去招聘')}
                     </button>

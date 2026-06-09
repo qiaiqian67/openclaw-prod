@@ -14,13 +14,15 @@ import {
     IconUser,
     IconSun,
     IconMoon,
+    IconFlame,
+    IconBolt,
+    IconCamera,
     IconLogout,
     IconWorld,
     IconChevronsLeft,
     IconChevronsRight,
     IconBell,
     IconBuildingMonument,
-    IconBuildingStore,
     IconSearch,
     IconX,
     IconPin,
@@ -33,7 +35,6 @@ import {
     IconChevronDown,
 } from '@tabler/icons-react';
 import { useAppStore } from '../stores';
-import TalentMarketModal from '../components/TalentMarketModal';
 
 /* ────── Tabler Icons ────── */
 const SidebarIcons = {
@@ -43,6 +44,9 @@ const SidebarIcons = {
     user: <IconUser size={16} stroke={1.5} />,
     sun: <IconSun size={16} stroke={1.5} />,
     moon: <IconMoon size={16} stroke={1.5} />,
+    flame: <IconFlame size={16} stroke={1.5} />,
+    bolt: <IconBolt size={16} stroke={1.5} />,
+    camera: <IconCamera size={16} stroke={1.5} />,
     logout: <IconLogout size={16} stroke={1.5} />,
     globe: <IconWorld size={16} stroke={1.5} />,
     collapse: <IconChevronsLeft size={16} stroke={1.5} />,
@@ -445,7 +449,6 @@ export default function Layout() {
     const langSubmenuPortalRef = useRef<HTMLDivElement>(null);
     const langHoverCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [showNotifications, setShowNotifications] = useState(false);
-    const [showTalentMarket, setShowTalentMarket] = useState(false);
     const [notifCategory, setNotifCategory] = useState<string>('all');
     const [selectedNotification, setSelectedNotification] = useState<any | null>(null);
     const [showTenantMenu, setShowTenantMenu] = useState(false);
@@ -622,8 +625,12 @@ export default function Layout() {
     };
 
     // Theme
-    const [theme, setTheme] = useState<'dark' | 'light'>(() => {
-        return (localStorage.getItem('theme') as 'dark' | 'light') || 'light';
+    const THEME_CYCLE = ['dark', 'light', 'claude', 'minimax', 'apple'] as const;
+    type ThemeName = typeof THEME_CYCLE[number];
+
+    const [theme, setTheme] = useState<ThemeName>(() => {
+        const stored = localStorage.getItem('theme');
+        return (THEME_CYCLE as readonly string[]).includes(stored || '') ? (stored as ThemeName) : 'light';
     });
 
     useEffect(() => {
@@ -631,7 +638,26 @@ export default function Layout() {
         localStorage.setItem('theme', theme);
     }, [theme]);
 
-    const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+    const cycleTheme = () => setTheme(prev => {
+        const idx = THEME_CYCLE.indexOf(prev);
+        return THEME_CYCLE[(idx + 1) % THEME_CYCLE.length];
+    });
+
+    const themeIconKey: Record<ThemeName, keyof typeof SidebarIcons> = {
+        dark: 'sun',
+        light: 'flame',
+        claude: 'bolt',
+        minimax: 'camera',
+        apple: 'moon',
+    };
+
+    const themeLabelKey: Record<ThemeName, string> = {
+        dark: 'common.lightMode',
+        light: 'common.claudeMode',
+        claude: 'common.minimaxMode',
+        minimax: 'common.appleMode',
+        apple: 'common.darkMode',
+    };
 
     // Sidebar collapse state
     const isSidebarCollapsed = useAppStore(s => s.sidebarCollapsed);
@@ -1029,7 +1055,7 @@ export default function Layout() {
                 <button
                     type="button"
                     onClick={() => {
-                        setShowTalentMarket(true);
+                        navigate('/plaza?view=hire');
                         setAgentDrawerOpen(false);
                     }}
                     title={t('nav.hire', t('nav.newAgent'))}
@@ -1095,12 +1121,6 @@ export default function Layout() {
                             </span>
                             <span className="sidebar-item-text">{t('nav.okr', 'OKR')}</span>
                         </NavLink>
-                        <NavLink to="/my-company" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
-                            <span className="sidebar-item-icon" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                <IconBuildingStore size={14} stroke={1.5} />
-                            </span>
-                            <span className="sidebar-item-text">{t('nav.myCompany', '我的公司')}</span>
-                        </NavLink>
                     </div>
                 </div>
                 
@@ -1118,7 +1138,7 @@ export default function Layout() {
                             <button
                                 type="button"
                                 data-tour-target="hire-agent"
-                                onClick={() => setShowTalentMarket(true)}
+                                onClick={() => navigate('/plaza?view=hire')}
                                 title={t('nav.hire', t('nav.newAgent'))}
                             >
                                 <IconPlus size={15} stroke={1.7} />
@@ -1134,10 +1154,10 @@ export default function Layout() {
                         <div className="sidebar-footer-controls" style={{
                             display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '8px', width: '100%',
                         }}>
-                            <button className="btn btn-ghost" onClick={toggleTheme} style={{
+                            <button className="btn btn-ghost" onClick={cycleTheme} style={{
                                 padding: '4px 8px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            }} title={theme === 'dark' ? t('common.lightMode') : t('common.darkMode')}>
-                                {theme === 'dark' ? SidebarIcons.sun : SidebarIcons.moon}
+                            }} title={t(themeLabelKey[theme])}>
+                                {SidebarIcons[themeIconKey[theme]]}
                             </button>
                             <button className="btn btn-ghost" onClick={() => setShowNotifications(v => !v)} style={{
                                 padding: '4px 8px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative',
@@ -1406,7 +1426,7 @@ export default function Layout() {
             )}
 
             <main className={`main-content${isChatPage ? ' chat-page' : ''}${isAgentSettingsPage ? ' agent-settings-page' : ''}`}>
-                <Outlet context={{ openTalentMarket: () => setShowTalentMarket(true) }} />
+                <Outlet />
             </main>
 
             {showAccountSettings && (
@@ -1417,10 +1437,6 @@ export default function Layout() {
                 />
             )}
 
-            <TalentMarketModal
-                open={showTalentMarket}
-                onClose={() => setShowTalentMarket(false)}
-            />
             {showCompanyTour && (
                 <CompanyTourOverlay
                     assistantId={tourAssistantId}

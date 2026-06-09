@@ -24,6 +24,26 @@ nsis:
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: true
   createStartMenuShortcut: true
+  # B 路径:用 customWelcomePage / customDirectoryPage / customFinishPage
+  # / customUnWelcomePage / customUnFinishPage 钩子替换 MUI2 默认页面
+  # (5 个营销页用 nsDialogs 完整重写,内容在 build/installer/installer.nsh)
+  # 保留 electron-builder 默认的 installer.nsi(否则 UNINSTALLER_OUT_FILE
+  # 设置会丢,导致 installSection 里的 File 命令失败)
+  installerHeader:  build/installer/header.bmp
+  installerSidebar: build/installer/sidebar.bmp
+  uninstallerSidebar: build/installer/sidebar.bmp
+  # License RTF — NSIS License 协议页(EULA 英文版,Apache 2.0)
+  # 字段路径是相对于 buildResources(build/),electron-builder 把它复制到
+  # ${BUILD_RESOURCES_DIR} 并在 installer.nsh 里以 MUI_PAGE_LICENSE 引用
+  license: build/LICENSE.rtf
+  include: build/installer/installer.nsh
+  # We only translate to English and Simplified Chinese. Default is 16
+  # languages, but our LangStrings only cover 1033/2052, which would trigger
+  # NSIS warning 6040 ("LangString not set in language table of <X>") for
+  # every other language and electron-builder treats that as a fatal error.
+  installerLanguages:
+    - en_US
+    - zh_CN
 mac:
   target:
     - target: dmg

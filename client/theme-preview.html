@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DeerClaw — 主题小样 v3(基于 3 套真实设计规范)</title>
+<style>
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #14141c;
+    color: #d0d0d8;
+    padding: 28px 24px 80px;
+    line-height: 1.55;
+  }
+  h1 { font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 6px; letter-spacing: 0.01em; }
+  .hint { font-size: 13px; color: #8b8b9e; margin-bottom: 22px; max-width: 940px; }
+  .hint code { background: #2a2a3a; padding: 1px 6px; border-radius: 4px; color: #d0d0d8; font-size: 12px; }
+  .section-title {
+    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em;
+    color: #6f6f80; margin: 22px 0 10px; padding-left: 2px;
+  }
+  .section-title .tag { color: #fb923c; margin-left: 8px; font-weight: 500; text-transform: none; letter-spacing: 0; font-size: 11px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+  @media (max-width: 980px) { .grid { grid-template-columns: 1fr; } }
+
+  .preview {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid #2a2a3a;
+    background: #0a0a0f;
+  }
+  .preview-header {
+    padding: 10px 14px;
+    background: #111119;
+    border-bottom: 1px solid #1e1e30;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .preview-name {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 600; color: #e1e1e8;
+  }
+  .preview-name .swatches { display: flex; gap: 4px; }
+  .preview-name .swatches span {
+    width: 14px; height: 14px; border-radius: 3px; display: block; border: 1px solid rgba(255,255,255,0.1);
+  }
+  .preview-tag {
+    font-size: 10.5px; padding: 2px 8px; border-radius: 10px;
+    background: #1c1c26; color: #8b8b9e; font-weight: 500;
+  }
+  .preview-tag.existing { background: #1c1c26; color: #8b8b9e; }
+  .preview-tag.apple { background: #0c2a52; color: #93c5fd; }
+  .preview-tag.claude { background: #4a1a06; color: #fdba74; }
+  .preview-tag.minimax { background: #0f0f0f; color: #d4d4d8; }
+
+  /* ── Sample app chrome — keep identical to v1/v2 so the only diff is color ─ */
+  .sample {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    height: 360px;
+    font-size: 12px;
+    color: var(--text-primary);
+  }
+  .sample-sidebar {
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border-subtle);
+    padding: 12px 8px;
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .sample-logo {
+    display: flex; align-items: center; gap: 6px;
+    font-weight: 600; font-size: 12px; color: var(--text-primary);
+    padding: 4px 8px 10px;
+  }
+  .sample-logo .logo-dot {
+    width: 14px; height: 14px;
+    background: var(--accent-primary);
+    border-radius: 4px;
+  }
+  .sample-nav-item {
+    padding: 6px 9px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: flex; align-items: center; gap: 7px;
+    border-radius: 6px;
+  }
+  .sample-nav-item.active {
+    background: var(--bg-hover); color: var(--text-primary);
+    font-weight: 500;
+  }
+  .sample-nav-item .dot {
+    width: 10px; height: 10px;
+    background: var(--border-default);
+    border-radius: 2px;
+  }
+  .sample-nav-item.active .dot { background: var(--accent-primary); }
+
+  .sample-main {
+    background: var(--bg-primary);
+    padding: 16px;
+    display: flex; flex-direction: column; gap: 10px;
+    overflow: hidden;
+  }
+  .sample-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+  .sample-subtitle { font-size: 11px; color: var(--text-tertiary); margin-top: -6px; }
+  .sample-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .sample-text { font-size: 11.5px; color: var(--text-secondary); line-height: 1.6; }
+  .sample-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 11px 13px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .sample-card-title {
+    font-size: 12.5px; font-weight: 600;
+    color: var(--text-primary);
+  }
+  .sample-card-meta { font-size: 10.5px; color: var(--text-tertiary); }
+  .sample-btn {
+    padding: 6px 14px;
+    font-size: 11.5px; font-weight: 500;
+    border: 1px solid var(--border-default);
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    font-family: inherit;
+    border-radius: 9999px;
+  }
+  .sample-btn.primary {
+    background: var(--accent-primary);
+    border: 1px solid var(--accent-primary);
+    color: var(--accent-btn-text, #fff);
+  }
+  .sample-input {
+    padding: 6px 10px;
+    font-size: 11px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-default);
+    color: var(--text-primary);
+    font-family: inherit;
+    min-width: 120px;
+    border-radius: 6px;
+  }
+  .sample-status {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 2px 8px;
+    font-size: 10.5px; font-weight: 600;
+    background: var(--success-subtle, rgba(34,197,94,0.12));
+    color: var(--success, #22c55e);
+    border-radius: 9999px;
+  }
+  .sample-status::before { content: ''; width: 5px; height: 5px; background: currentColor; border-radius: 50%; }
+
+  /* ════════════════════════════════════════════
+     THEME DEFINITIONS
+     Based on the 3 design specs in client/design/
+     Only color tokens change; structure identical.
+     ════════════════════════════════════════════ */
+
+  /* ── Existing: dark ─ */
+  [data-theme="dark"] {
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #111119;
+    --bg-tertiary: #18181f;
+    --bg-elevated: #1c1c26;
+    --bg-hover: #22222e;
+    --bg-active: #2a2a3a;
+    --border-default: #26263a;
+    --border-subtle: #1e1e30;
+    --border-strong: #35354a;
+    --text-primary: #e1e1e8;
+    --text-secondary: #8b8b9e;
+    --text-tertiary: #5c5c70;
+    --text-inverse: #0a0a0f;
+    --accent-primary: #e1e1e8;
+    --accent-hover: #ffffff;
+    --accent-subtle: rgba(225,225,232,0.08);
+    --accent-text: #c0c0cc;
+    --accent-btn-text: #0a0a0f;
+    --success: #22c55e;
+    --success-subtle: rgba(34,197,94,0.12);
+    --error: #ef4444;
+    --error-subtle: rgba(239,68,68,0.12);
+    --status-running: #22c55e;
+    --status-idle: #8b8b9e;
+    --status-error: #ef4444;
+  }
+
+  /* ── Existing: light ─ */
+  [data-theme="light"] {
+    --bg-primary: #f8f8f7;
+    --bg-secondary: #f5f5f3;
+    --bg-tertiary: #efefec;
+    --bg-elevated: #fffefd;
+    --bg-hover: #ededeb;
+    --bg-active: #e2e2dd;
+    --border-default: #d5d4cd;
+    --border-subtle: #e3e2dc;
+    --border-strong: #c3c1b9;
+    --text-primary: #1a1a22;
+    --text-secondary: #6b6b80;
+    --text-tertiary: #9898a8;
+    --text-inverse: #ffffff;
+    --accent-primary: #3a3a42;
+    --accent-hover: #28282e;
+    --accent-subtle: rgba(58,58,66,0.08);
+    --accent-text: #3a3a42;
+    --accent-btn-text: #ffffff;
+    --success: #16a34a;
+    --success-subtle: rgba(22,163,74,0.08);
+    --error: #dc2626;
+    --error-subtle: rgba(220,38,38,0.08);
+    --status-running: #16a34a;
+    --status-idle: #9898a8;
+    --status-error: #dc2626;
+  }
+
+  /* ── NEW: Apple (Action Blue + Pure White, from client/design/apple.md) ─ */
+  [data-theme="apple"] {
+    /* Surfaces */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f5f7;        /* canvas-parchment */
+    --bg-tertiary: #fafafc;         /* surface-pearl */
+    --bg-elevated: #ffffff;
+    --bg-hover: #f5f5f7;
+    --bg-active: #ececee;
+    --border-default: #e0e0e0;      /* hairline */
+    --border-subtle: #f0f0f0;       /* divider-soft */
+    --border-strong: #c7c7cc;
+    /* Text */
+    --text-primary: #1d1d1f;        /* ink */
+    --text-secondary: #333333;      /* ink-muted-80 */
+    --text-tertiary: #7a7a7a;       /* ink-muted-48 */
+    --text-inverse: #ffffff;
+    /* Action Blue (the only accent — single-color discipline) */
+    --accent-primary: #0066cc;      /* primary */
+    --accent-hover: #0071e3;        /* primary-focus */
+    --accent-subtle: rgba(0,102,204,0.08);
+    --accent-text: #0066cc;
+    --accent-btn-text: #ffffff;
+    /* Semantic */
+    --success: #1ba673;
+    --success-subtle: rgba(27,166,115,0.10);
+    --error: #d45656;
+    --error-subtle: rgba(212,86,86,0.10);
+    --status-running: #1ba673;
+    --status-idle: #7a7a7a;
+    --status-error: #d45656;
+  }
+
+  /* ── NEW: Claude (Coral + Cream, from client/design/claude.md) ─ */
+  [data-theme="claude"] {
+    /* Surfaces (cream + dark navy for product surfaces) */
+    --bg-primary: #faf9f5;          /* canvas — warm cream */
+    --bg-secondary: #f5f0e8;        /* surface-soft */
+    --bg-tertiary: #efe9de;         /* surface-card */
+    --bg-elevated: #efe9de;         /* surface-card for cards */
+    --bg-hover: #f0e9db;
+    --bg-active: #e8e0d2;
+    --border-default: #e6dfd8;      /* hairline */
+    --border-subtle: #ebe6df;       /* hairline-soft */
+    --border-strong: #d4c9b8;
+    /* Text (warm dark, not pure black) */
+    --text-primary: #141413;        /* ink */
+    --text-secondary: #3d3d3a;      /* body */
+    --text-tertiary: #6c6a64;       /* muted */
+    --text-inverse: #faf9f5;
+    /* Coral primary (#cc785c — Anthropic signature) */
+    --accent-primary: #cc785c;      /* primary */
+    --accent-hover: #a9583e;        /* primary-active */
+    --accent-subtle: rgba(204,120,92,0.10);
+    --accent-text: #cc785c;
+    --accent-btn-text: #ffffff;
+    /* Semantic */
+    --success: #5db872;
+    --success-subtle: rgba(93,184,114,0.10);
+    --error: #c64545;
+    --error-subtle: rgba(198,69,69,0.10);
+    --status-running: #5db872;
+    --status-idle: #6c6a64;
+    --status-error: #c64545;
+  }
+
+  /* ── NEW: MiniMax (Black pill + vibrant accents, from client/design/minimax.md) ─ */
+  [data-theme="minimax"] {
+    /* Surfaces */
+    --bg-primary: #ffffff;          /* canvas */
+    --bg-secondary: #f7f8fa;        /* surface */
+    --bg-tertiary: #f2f3f5;         /* surface-soft */
+    --bg-elevated: #ffffff;
+    --bg-hover: #f2f3f5;
+    --bg-active: #e5e7eb;
+    --border-default: #e5e7eb;      /* hairline */
+    --border-subtle: #eaecf0;       /* hairline-soft */
+    --border-strong: #d1d5db;
+    /* Text */
+    --text-primary: #0a0a0a;        /* ink — near-black anchor */
+    --text-secondary: #222222;      /* charcoal */
+    --text-tertiary: #5f5f5f;       /* steel */
+    --text-inverse: #ffffff;
+    /* Black-pill primary (dominant CTA from the spec) */
+    --accent-primary: #0a0a0a;      /* primary — black */
+    --accent-hover: #222222;        /* primary-pressed */
+    --accent-subtle: rgba(10,10,10,0.06);
+    --accent-text: #0a0a0a;
+    --accent-btn-text: #ffffff;
+    /* Semantic (using spec's success + error) */
+    --success: #1ba673;             /* success-text */
+    --success-subtle: #e8ffea;      /* success-bg */
+    --error: #d45656;
+    --error-subtle: rgba(212,86,86,0.10);
+    --status-running: #1ba673;
+    --status-idle: #8e8e93;
+    --status-error: #d45656;
+  }
+</style>
+</head>
+<body>
+  <h1>DeerClaw — 主题小样 v3(基于 <code>client/design/</code> 3 套真实设计规范)</h1>
+  <p class="hint">完全照搬 <code>apple.md</code> / <code>claude.md</code> / <code>minimax.md</code> 三份规范的核心色 token。布局/圆角/阴影/组件结构与现有 <code>light</code> 一致,只换 <code>--bg-* / --text-* / --border-* / --accent-* / --success / --error / --status-*</code> 这 16 个颜色变量。挑 2 个告诉我,我就把它们原样搬进 <code>index.css</code>,再加 Layout 循环切换 + i18n key。</p>
+
+  <div class="section-title">现有主题 <span class="tag">参考,不动</span></div>
+  <div class="grid">
+    <div class="preview">
+      <div class="preview-header">
+        <div class="preview-name">
+          <div class="swatches"><span style="background:#0a0a0f"></span><span style="background:#e1e1e8"></span><span style="background:#22c55e"></span></div>
+          dark <span style="font-weight:400;color:#5c5c70">· existing</span>
+        </div>
+        <span class="preview-tag existing">existing</span>
+      </div>
+      <div class="sample" data-theme="dark">
+        <div class="sample-sidebar">
+          <div class="sample-logo"><span class="logo-dot"></span> DeerClaw</div>
+          <div class="sample-nav-item active"><span class="dot"></span> 广场</div>
+          <div class="sample-nav-item"><span class="dot"></span> 仪表盘</div>
+          <div class="sample-nav-item"><span class="dot"></span> 智能体</div>
+          <div class="sample-nav-item"><span class="dot"></span> 消息</div>
+        </div>
+        <div class="sample-main">
+          <div>
+            <div class="sample-title">智能体广场</div>
+            <div class="sample-subtitle">发现并加入合适的 AI 同事</div>
+          </div>
+          <div class="sample-text">这里展示 AI 智能体列表,支持搜索、分类筛选和发布。</div>
+          <div class="sample-card">
+            <div class="sample-card-title">首席助理 <span class="sample-status" style="margin-left:6px">运行中</span></div>
+            <div class="sample-card-meta">帮你处理邮件、日程和文档</div>
+          </div>
+          <div class="sample-row">
+            <button class="sample-btn primary">+ 新建智能体</button>
+            <button class="sample-btn">查看详情</button>
+            <input class="sample-input" placeholder="搜索…" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview">
+      <div class="preview-header">
+        <div class="preview-name">
+          <div class="swatches"><span style="background:#f8f8f7"></span><span style="background:#1a1a22"></span><span style="background:#16a34a"></span></div>
+          light <span style="font-weight:400;color:#5c5c70">· existing</span>
+        </div>
+        <span class="preview-tag existing">existing</span>
+      </div>
+      <div class="sample" data-theme="light">
+        <div class="sample-sidebar">
+          <div class="sample-logo"><span class="logo-dot"></span> DeerClaw</div>
+          <div class="sample-nav-item active"><span class="dot"></span> 广场</div>
+          <div class="sample-nav-item"><span class="dot"></span> 仪表盘</div>
+          <div class="sample-nav-item"><span class="dot"></span> 智能体</div>
+          <div class="sample-nav-item"><span class="dot"></span> 消息</div>
+        </div>
+        <div class="sample-main">
+          <div>
+            <div class="sample-title">智能体广场</div>
+            <div class="sample-subtitle">发现并加入合适的 AI 同事</div>
+          </div>
+          <div class="sample-text">这里展示 AI 智能体列表,支持搜索、分类筛选和发布。</div>
+          <div class="sample-card">
+            <div class="sample-card-title">首席助理 <span class="sample-status" style="margin-left:6px">运行中</span></div>
+            <div class="sample-card-meta">帮你处理邮件、日程和文档</div>
+          </div>
+          <div class="sample-row">
+            <button class="sample-btn primary">+ 新建智能体</button>
+            <button class="sample-btn">查看详情</button>
+            <input class="sample-input" placeholder="搜索…" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">新主题候选 <span class="tag">从 3 套规范里挑 2 个</span></div>
+  <div class="grid">
+
+    <div class="preview">
+      <div class="preview-header">
+        <div class="preview-name">
+          <div class="swatches"><span style="background:#ffffff"></span><span style="background:#1d1d1f"></span><span style="background:#0066cc"></span></div>
+          apple <span style="font-weight:400;color:#5c5c70">· Action Blue</span>
+        </div>
+        <span class="preview-tag apple">cand. A · spec:apple.md</span>
+      </div>
+      <div class="sample" data-theme="apple">
+        <div class="sample-sidebar">
+          <div class="sample-logo"><span class="logo-dot"></span> DeerClaw</div>
+          <div class="sample-nav-item active"><span class="dot"></span> 广场</div>
+          <div class="sample-nav-item"><span class="dot"></span> 仪表盘</div>
+          <div class="sample-nav-item"><span class="dot"></span> 智能体</div>
+          <div class="sample-nav-item"><span class="dot"></span> 消息</div>
+        </div>
+        <div class="sample-main">
+          <div>
+            <div class="sample-title">智能体广场</div>
+            <div class="sample-subtitle">发现并加入合适的 AI 同事</div>
+          </div>
+          <div class="sample-text">这里展示 AI 智能体列表,支持搜索、分类筛选和发布。</div>
+          <div class="sample-card">
+            <div class="sample-card-title">首席助理 <span class="sample-status" style="margin-left:6px">运行中</span></div>
+            <div class="sample-card-meta">帮你处理邮件、日程和文档</div>
+          </div>
+          <div class="sample-row">
+            <button class="sample-btn primary">+ 新建智能体</button>
+            <button class="sample-btn">查看详情</button>
+            <input class="sample-input" placeholder="搜索…" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview">
+      <div class="preview-header">
+        <div class="preview-name">
+          <div class="swatches"><span style="background:#faf9f5"></span><span style="background:#141413"></span><span style="background:#cc785c"></span></div>
+          claude <span style="font-weight:400;color:#5c5c70">· Coral</span>
+        </div>
+        <span class="preview-tag claude">cand. B · spec:claude.md</span>
+      </div>
+      <div class="sample" data-theme="claude">
+        <div class="sample-sidebar">
+          <div class="sample-logo"><span class="logo-dot"></span> DeerClaw</div>
+          <div class="sample-nav-item active"><span class="dot"></span> 广场</div>
+          <div class="sample-nav-item"><span class="dot"></span> 仪表盘</div>
+          <div class="sample-nav-item"><span class="dot"></span> 智能体</div>
+          <div class="sample-nav-item"><span class="dot"></span> 消息</div>
+        </div>
+        <div class="sample-main">
+          <div>
+            <div class="sample-title">智能体广场</div>
+            <div class="sample-subtitle">发现并加入合适的 AI 同事</div>
+          </div>
+          <div class="sample-text">这里展示 AI 智能体列表,支持搜索、分类筛选和发布。</div>
+          <div class="sample-card">
+            <div class="sample-card-title">首席助理 <span class="sample-status" style="margin-left:6px">运行中</span></div>
+            <div class="sample-card-meta">帮你处理邮件、日程和文档</div>
+          </div>
+          <div class="sample-row">
+            <button class="sample-btn primary">+ 新建智能体</button>
+            <button class="sample-btn">查看详情</button>
+            <input class="sample-input" placeholder="搜索…" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview">
+      <div class="preview-header">
+        <div class="preview-name">
+          <div class="swatches"><span style="background:#ffffff"></span><span style="background:#0a0a0a"></span><span style="background:#0a0a0a"></span></div>
+          minimax <span style="font-weight:400;color:#5c5c70">· Black Pill</span>
+        </div>
+        <span class="preview-tag minimax">cand. C · spec:minimax.md</span>
+      </div>
+      <div class="sample" data-theme="minimax">
+        <div class="sample-sidebar">
+          <div class="sample-logo"><span class="logo-dot"></span> DeerClaw</div>
+          <div class="sample-nav-item active"><span class="dot"></span> 广场</div>
+          <div class="sample-nav-item"><span class="dot"></span> 仪表盘</div>
+          <div class="sample-nav-item"><span class="dot"></span> 智能体</div>
+          <div class="sample-nav-item"><span class="dot"></span> 消息</div>
+        </div>
+        <div class="sample-main">
+          <div>
+            <div class="sample-title">智能体广场</div>
+            <div class="sample-subtitle">发现并加入合适的 AI 同事</div>
+          </div>
+          <div class="sample-text">这里展示 AI 智能体列表,支持搜索、分类筛选和发布。</div>
+          <div class="sample-card">
+            <div class="sample-card-title">首席助理 <span class="sample-status" style="margin-left:6px">运行中</span></div>
+            <div class="sample-card-meta">帮你处理邮件、日程和文档</div>
+          </div>
+          <div class="sample-row">
+            <button class="sample-btn primary">+ 新建智能体</button>
+            <button class="sample-btn">查看详情</button>
+            <input class="sample-input" placeholder="搜索…" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="hint" style="margin-top: 30px;">
+    <strong>3 套规范摘要</strong> ·
+    <span style="color:#93c5fd"><strong>A apple</strong></span> = 纯白 + Action Blue #0066cc(单强调色,博物馆级留白,17px body 慢阅读节奏) ·
+    <span style="color:#fdba74"><strong>B claude</strong></span> = 暖米 #faf9f5 + 珊瑚 #cc785c + 深海军 #181715(衬线 display + 人文 sans,文学感,三表面 trinity) ·
+    <span style="color:#d4d4d8"><strong>C minimax</strong></span> = 纯白 + 黑 pill #0a0a0a 强调 + 极简 hairline(80px hero,DM Sans,高密度文档网格)
+  </p>
+  <p class="hint">
+    关键差异:从色相/明度看,<strong>apple</strong> 是中性冷蓝、<strong>claude</strong> 是暖色珊瑚、<strong>minimax</strong> 是高对比黑白。从情绪看:apple = 现代克制、claude = 文学编辑、minimax = 技术密度。三套都跟现有 dark/light 显著区分。挑 2 个告诉我。
+  </p>
+</body>
+</html>

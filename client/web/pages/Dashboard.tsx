@@ -1,13 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { agentApi, taskApi, activityApi, fetchJson, tenantApi } from '../services/api';
 import type { Agent, Task } from '../types';
 
-type LayoutOutletContext = {
-    openTalentMarket?: () => void;
-};
+const MyCompany = lazy(() => import('./MyCompany'));
 
 /* ────── Inline SVG Icons (monochrome) ────── */
 
@@ -504,8 +502,8 @@ function ActivityFeed({ activities, agents }: { activities: any[]; agents: Agent
 export default function Dashboard() {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const outletContext = useOutletContext<LayoutOutletContext | null>();
-    const openTalentMarket = outletContext?.openTalentMarket;
+    const [searchParams, setSearchParams] = useSearchParams();
+    const view: 'overview' | 'company' = searchParams.get('view') === 'company' ? 'company' : 'overview';
     const currentTenant = localStorage.getItem('current_tenant_id') || '';
 
     const { data: agents = [], isLoading } = useQuery({
@@ -569,22 +567,80 @@ export default function Dashboard() {
 
     return (
         <div>
-            {/* Header */}
+            {/* ─── Header (左标题 / 右 segmented tab) ─── */}
             <div style={{
-                display: 'flex', justifyContent: 'space-between',
-                alignItems: 'center', marginBottom: '28px',
+                display: 'grid',
+                gridTemplateColumns: 'minmax(0, 1fr) auto',
+                alignItems: 'center',
+                gap: '12px',
+                marginBottom: '24px',
             }}>
                 <div>
-                    <h1 style={{ fontSize: '20px', fontWeight: 600, margin: 0, marginBottom: '2px', letterSpacing: '-0.02em' }}>
-                        {greeting}
-                    </h1>
-                    <p style={{ fontSize: '13px', color: 'var(--text-tertiary)', margin: 0 }}>
-                        {t('dashboard.totalAgents', { count: agents.length })}
-                    </p>
+                    {view === 'overview' ? (
+                        <>
+                            <h1 style={{ fontSize: '20px', fontWeight: 600, margin: 0, marginBottom: '2px', letterSpacing: '-0.02em' }}>
+                                {greeting}
+                            </h1>
+                            <p style={{ fontSize: '13px', color: 'var(--text-tertiary)', margin: 0 }}>
+                                {t('dashboard.totalAgents', { count: agents.length })}
+                            </p>
+                        </>
+                    ) : (
+                        <>
+                            <h1 style={{ fontSize: '20px', fontWeight: 600, margin: 0, marginBottom: '2px', letterSpacing: '-0.02em' }}>
+                                {t('myCompany.title', '我的公司')}
+                            </h1>
+                            <p style={{ fontSize: '13px', color: 'var(--text-tertiary)', margin: 0 }}>
+                                {t('myCompany.subtitle', '看看你的数字员工们都在忙什么')}
+                            </p>
+                        </>
+                    )}
+                </div>
+                <div
+                    className="plaza-tab-segmented"
+                    role="tablist"
+                    aria-label={t('dashboard.tabsAria', 'Dashboard sections')}
+                >
+                    <button
+                        role="tab"
+                        aria-selected={view === 'overview'}
+                        className={`plaza-tab-segmented-btn ${view === 'overview' ? 'active' : ''}`}
+                        onClick={() => {
+                            setSearchParams((prev) => {
+                                const next = new URLSearchParams(prev);
+                                next.delete('view');
+                                return next;
+                            }, { replace: true });
+                        }}
+                    >
+                        {t('dashboard.tabOverview', '概览')}
+                    </button>
+                    <button
+                        role="tab"
+                        aria-selected={view === 'company'}
+                        className={`plaza-tab-segmented-btn ${view === 'company' ? 'active' : ''}`}
+                        onClick={() => {
+                            setSearchParams((prev) => {
+                                const next = new URLSearchParams(prev);
+                                next.set('view', 'company');
+                                return next;
+                            }, { replace: true });
+                        }}
+                    >
+                        {t('dashboard.tabMyCompany', '我的公司')}
+                    </button>
                 </div>
             </div>
 
-            {isLoading ? (
+            {view === 'company' ? (
+                <Suspense fallback={
+                    <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-tertiary)', fontSize: '13px' }}>
+                        {t('common.loading')}
+                    </div>
+                }>
+                    <MyCompany />
+                </Suspense>
+            ) : isLoading ? (
                 <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-tertiary)', fontSize: '13px' }}>
                     {t('common.loading')}
                 </div>
@@ -598,13 +654,7 @@ export default function Dashboard() {
                     </div>
                     <button
                         className="btn btn-primary"
-                        onClick={() => {
-                            if (openTalentMarket) {
-                                openTalentMarket();
-                                return;
-                            }
-                            navigate('/agents/new');
-                        }}
+                        onClick={() => navigate('/plaza?view=hire')}
                     >
                         {Icons.plus} {t('nav.newAgent')}
                     </button>

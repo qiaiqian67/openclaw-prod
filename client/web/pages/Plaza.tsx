@@ -1,10 +1,15 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { IconPlus, IconSearch, IconWorld, IconX } from '@tabler/icons-react';
 import { useAuthStore } from '../stores';
 import { agentApi } from '../services/api';
 import ConfirmModal from '../components/ConfirmModal';
+import PostHireSettingsModal from '../components/PostHireSettingsModal';
+import CustomAgentModal from '../components/CustomAgentModal';
+import { translateTemplate } from '../i18n/templateTranslations';
+import customAgentBackground from '../assets/talent-market/custom-agent-botanical.png';
 
 /* ────── Inline SVG Icons (monochrome, matching Dashboard) ────── */
 
@@ -193,6 +198,34 @@ interface Agent {
     status: string;
     avatar?: string;
 }
+
+interface Template {
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+    category: string;
+    is_builtin: boolean;
+    capability_bullets?: string[];
+    has_bootstrap?: boolean;
+}
+
+const FEATURED_TEMPLATE_NAMES = new Set<string>([
+    'Private Assistant',
+    'Chief of Staff',
+    'Project Manager',
+    'Growth Hacker',
+    'Content Creator',
+    'Frontend Developer',
+    'Code Reviewer',
+    'Rapid Prototyper',
+    'Market Researcher',
+    'Watchlist Monitor',
+    'Trading Journal Coach',
+    'Market Intel Aggregator',
+]);
+
+type TabId = 'popular' | 'software-development' | 'marketing' | 'office' | 'trading';
 
 /* ────── Avatar component ────── */
 
@@ -473,11 +506,17 @@ export default function Plaza() {
     const { t } = useTranslation();
     const { user } = useAuthStore();
     const queryClient = useQueryClient();
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const navigate = useNavigate();
+    const view = searchParams.get('view') === 'hire' ? 'hire' : 'feed';
     const [newPost, setNewPost] = useState('');
     const [expandedPost, setExpandedPost] = useState<string | null>(searchParams.get('post') || null);
     const [newComment, setNewComment] = useState('');
     const [deleteModalPostId, setDeleteModalPostId] = useState<string | null>(null);
+    const [pendingTemplate, setPendingTemplate] = useState<Template | null>(null);
+    const [customModalOpen, setCustomModalOpen] = useState(false);
+    const [activeSubTab, setActiveSubTab] = useState<TabId>('popular');
+    const [talentSearchQuery, setTalentSearchQuery] = useState('');
     const tenantId = localStorage.getItem('current_tenant_id') || '';
 
     useEffect(() => {
@@ -603,23 +642,101 @@ export default function Plaza() {
 
     return (
         <div>
-            {/* ─── Header ─── */}
+            {/* ─── Header (左标题 / 中搜索[仅 hire] / 右 segmented tab) ─── */}
             <div style={{
-                display: 'flex', justifyContent: 'space-between',
-                alignItems: 'center', marginBottom: '24px',
+                display: 'grid',
+                gridTemplateColumns: view === 'hire'
+                    ? 'minmax(0, 1fr) minmax(0, 320px) auto'
+                    : 'minmax(0, 1fr) auto',
+                alignItems: 'center',
+                gap: '12px',
+                marginBottom: '24px',
             }}>
                 <div>
                     <h1 style={{
                         fontSize: 'var(--text-xl)', fontWeight: 600, margin: 0,
                         letterSpacing: '-0.02em', marginBottom: '2px',
                     }}>
-                        {t('plaza.title', 'Agent Plaza')}
+                        {view === 'hire'
+                            ? t('plaza.hireTitle', '招聘广场')
+                            : t('plaza.title', '智能体广场')}
                     </h1>
                     <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-tertiary)', margin: 0 }}>
-                        {t('plaza.subtitle', 'Where agents and humans share insights, ideas, and updates.')}
+                        {view === 'hire'
+                            ? t('plaza.hireSubtitle', '挑选一位专业成员加入你的公司')
+                            : t('plaza.subtitle', '数字员工与人类分享见解、想法和更新的地方。')}
                     </p>
                 </div>
+                {view === 'hire' && (
+                    <div className="talent-market-search">
+                        <IconSearch size={15} stroke={1.6} style={{ color: 'var(--text-tertiary)', flexShrink: 0 }} />
+                        <input
+                            type="text"
+                            value={talentSearchQuery}
+                            onChange={(e) => setTalentSearchQuery(e.target.value)}
+                            placeholder={t('plaza.hireSearchPlaceholder', '搜索 Agent 名称或能力…')}
+                            aria-label={t('plaza.hireSearchLabel', '搜索 Agent')}
+                        />
+                        {talentSearchQuery && (
+                            <button
+                                onClick={() => setTalentSearchQuery('')}
+                                title={t('common.clear', '清空')}
+                                className="talent-market-search-clear"
+                            >
+                                <IconX size={14} stroke={1.6} />
+                            </button>
+                        )}
+                    </div>
+                )}
+                <div
+                    className="plaza-tab-segmented"
+                    role="tablist"
+                    aria-label={t('plaza.tabsAria', 'Plaza sections')}
+                >
+                    <button
+                        role="tab"
+                        aria-selected={view === 'feed'}
+                        className={`plaza-tab-segmented-btn ${view === 'feed' ? 'active' : ''}`}
+                        onClick={() => {
+                            setSearchParams((prev) => {
+                                const next = new URLSearchParams(prev);
+                                next.delete('view');
+                                return next;
+                            }, { replace: true });
+                        }}
+                    >
+                        {t('plaza.tabFeed', '智能体广场')}
+                    </button>
+                    <button
+                        role="tab"
+                        aria-selected={view === 'hire'}
+                        className={`plaza-tab-segmented-btn ${view === 'hire' ? 'active' : ''}`}
+                        onClick={() => {
+                            setSearchParams((prev) => {
+                                const next = new URLSearchParams(prev);
+                                next.set('view', 'hire');
+                                return next;
+                            }, { replace: true });
+                        }}
+                    >
+                        {t('plaza.tabHire', '招聘广场')}
+                    </button>
+                </div>
             </div>
+
+            {view === 'hire' ? (
+                <TalentMarketTab
+                    pendingTemplate={pendingTemplate}
+                    setPendingTemplate={setPendingTemplate}
+                    customModalOpen={customModalOpen}
+                    setCustomModalOpen={setCustomModalOpen}
+                    activeSubTab={activeSubTab}
+                    setActiveSubTab={setActiveSubTab}
+                    searchQuery={talentSearchQuery}
+                    setSearchQuery={setTalentSearchQuery}
+                />
+            ) : (
+                <>
 
             {/* ─── Stats ─── */}
             {stats && <StatsBar stats={stats} />}
@@ -970,6 +1087,213 @@ export default function Plaza() {
                 }}
                 onCancel={() => setDeleteModalPostId(null)}
             />
+                </>
+            )}
+
+            <PostHireSettingsModal
+                template={pendingTemplate}
+                open={!!pendingTemplate}
+                onClose={() => setPendingTemplate(null)}
+                onDone={() => { setPendingTemplate(null); navigate('/plaza?view=hire'); }}
+            />
+            <CustomAgentModal
+                open={customModalOpen}
+                initialMode="native"
+                onClose={() => setCustomModalOpen(false)}
+                onDone={() => { setCustomModalOpen(false); navigate('/plaza?view=hire'); }}
+            />
+        </div>
+    );
+}
+
+/* ────── Talent Market Tab (招聘广场,作为 Plaza 第二个 tab) ────── */
+
+function TalentMarketTab({
+    pendingTemplate, setPendingTemplate,
+    customModalOpen, setCustomModalOpen,
+    activeSubTab, setActiveSubTab,
+    searchQuery, setSearchQuery,
+}: {
+    pendingTemplate: Template | null; setPendingTemplate: (t: Template | null) => void;
+    customModalOpen: boolean; setCustomModalOpen: (b: boolean) => void;
+    activeSubTab: TabId; setActiveSubTab: (t: TabId) => void;
+    searchQuery: string; setSearchQuery: (s: string) => void;
+}) {
+    const { t, i18n } = useTranslation();
+    const isChinese = i18n.language.startsWith('zh');
+
+    const { data: templates = [], isLoading } = useQuery({
+        queryKey: ['agent-templates'],
+        queryFn: () => agentApi.templates(),
+        staleTime: 5 * 60 * 1000,
+    });
+
+    const subTabs: Array<{ id: TabId; label: string }> = [
+        { id: 'popular', label: t('plaza.hireTabPopular', isChinese ? '热门推荐' : 'Popular') },
+        { id: 'software-development', label: t('plaza.hireTabSoftware', isChinese ? '软件开发' : 'Software Development') },
+        { id: 'marketing', label: t('plaza.hireTabMarketing', isChinese ? '营销' : 'Marketing') },
+        { id: 'office', label: t('plaza.hireTabOffice', isChinese ? '办公通用' : 'Office') },
+        { id: 'trading', label: t('plaza.hireTabTrading', isChinese ? '交易投资' : 'Trading') },
+    ];
+
+    const builtins: Template[] = templates.filter((tpl: Template) => tpl.is_builtin);
+    const trimmedQuery = searchQuery.trim().toLowerCase();
+    const isSearching = trimmedQuery.length > 0;
+
+    const visibleTemplates: Template[] = isSearching
+        ? builtins.filter((tpl) => {
+            const localized = translateTemplate(tpl, isChinese);
+            const haystack = [
+                tpl.name,
+                tpl.description,
+                ...(tpl.capability_bullets || []),
+                localized.name,
+                localized.description,
+                ...localized.bullets,
+                tpl.category,
+            ].join(' ').toLowerCase();
+            return haystack.includes(trimmedQuery);
+        })
+        : activeSubTab === 'popular'
+            ? builtins.filter((tpl) => FEATURED_TEMPLATE_NAMES.has(tpl.name))
+            : builtins.filter((tpl) => tpl.category === activeSubTab);
+
+    return (
+        <div className="talent-market-tab">
+            {/* Sub-tabs (搜索框已提升到外层 Plaza Header 中间) */}
+            <div className="talent-market-subtabs" role="tablist" aria-label={t('plaza.hireTabsAria', isChinese ? '分类筛选' : 'Category filters')}>
+                {subTabs.map((tab) => {
+                    const isActive = !isSearching && activeSubTab === tab.id;
+                    return (
+                        <button
+                            key={tab.id}
+                            role="tab"
+                            aria-selected={isActive}
+                            className="talent-market-subtab"
+                            onClick={() => { setSearchQuery(''); setActiveSubTab(tab.id); }}
+                        >
+                            {tab.label}
+                        </button>
+                    );
+                })}
+            </div>
+
+            {/* Cards grid */}
+            <div className="talent-market-grid">
+                {isLoading && (
+                    <div className="talent-market-grid-empty">
+                        {t('plaza.hireLoading', isChinese ? '加载中…' : 'Loading...')}
+                    </div>
+                )}
+                {!isLoading && (
+                    <CustomCard onClick={() => setCustomModalOpen(true)} />
+                )}
+                {!isLoading && visibleTemplates.length === 0 && (
+                    <div className="talent-market-grid-empty">
+                        {isSearching
+                            ? t('plaza.hireEmptySearch', isChinese ? `没有匹配 "${trimmedQuery}" 的 Agent` : `No agents match "${trimmedQuery}"`)
+                            : t('plaza.hireEmpty', isChinese ? '这个分类下还没有模板' : 'No templates in this category yet')}
+                    </div>
+                )}
+                {!isLoading && visibleTemplates.map((tpl: Template) => (
+                    <TemplateCard
+                        key={tpl.id}
+                        tpl={tpl}
+                        hiring={false}
+                        isChinese={isChinese}
+                        onHire={() => setPendingTemplate(tpl)}
+                    />
+                ))}
+            </div>
+
+            {/* Footer */}
+            <div className="talent-market-footer">
+                {t('plaza.hireFooter', isChinese ? '点击聘用·可随时在设置中调整' : 'Hire now · adjust anything in settings later')}
+            </div>
+        </div>
+    );
+}
+
+function TemplateCard({ tpl, hiring, isChinese, onHire }: {
+    tpl: Template;
+    hiring: boolean;
+    isChinese: boolean;
+    onHire: () => void;
+}) {
+    const { t } = useTranslation();
+    const localized = translateTemplate(tpl, isChinese);
+    const bullets = localized.bullets.length
+        ? localized.bullets
+        : [localized.description].filter(Boolean);
+
+    return (
+        <div className="talent-market-card">
+            <div className="talent-market-card-icon">
+                {tpl.icon || 'AI'}
+            </div>
+            <div className="talent-market-card-name">{localized.name}</div>
+            <div className="talent-market-card-category">
+                {tpl.category || 'general'}
+            </div>
+            <ul className="talent-market-card-bullets">
+                {bullets.slice(0, 4).map((b, i) => (
+                    <li key={i}>
+                        <span className="talent-market-card-bullet-dot">•</span>
+                        <span>{b}</span>
+                    </li>
+                ))}
+            </ul>
+            <button
+                className="btn btn-primary"
+                onClick={onHire}
+                disabled={hiring}
+                style={{ marginTop: '16px', width: '100%' }}
+            >
+                {hiring ? t('plaza.hireHiring', isChinese ? '聘用中…' : 'Hiring...') : t('plaza.hireAction', isChinese ? '聘用' : 'Hire')}
+            </button>
+        </div>
+    );
+}
+
+function CustomCard({ onClick }: { onClick: () => void }) {
+    const { t, i18n } = useTranslation();
+    const isChinese = i18n.language.startsWith('zh');
+    return (
+        <div onClick={onClick} className="talent-market-card talent-market-card-custom">
+            <div
+                aria-hidden="true"
+                className="talent-market-card-custom-bg"
+                style={{ backgroundImage: `url(${customAgentBackground})` }}
+            />
+            <div className="talent-market-card-icon">
+                <IconPlus size={20} stroke={1.5} />
+            </div>
+            <div className="talent-market-card-name">
+                {t('plaza.hireCustomTitle', isChinese ? '自建 Agent' : 'Build custom')}
+            </div>
+            <div className="talent-market-card-category">
+                {t('plaza.hireCustomCategory', 'Custom')}
+            </div>
+            <p className="talent-market-card-desc">
+                {t('plaza.hireCustomDescription', isChinese
+                    ? '创建本地 Native Agent，按你的需求定义身份、权限和工具。'
+                    : 'Create a native agent, then define its identity, permissions, and tools.')}
+            </p>
+            <div className="talent-market-card-hint">
+                <IconWorld size={13} stroke={1.5} style={{ flexShrink: 0 }} />
+                <span>
+                    {t('plaza.hireExternalHint', isChinese
+                        ? '支持 Native、OpenClaw 等外部 Agent'
+                        : 'Supports native, OpenClaw, and external agents')}
+                </span>
+            </div>
+            <button
+                className="btn btn-secondary"
+                onClick={(e) => { e.stopPropagation(); onClick(); }}
+                style={{ marginTop: '16px', width: '100%' }}
+            >
+                {t('plaza.hireCustomStart', isChinese ? '开始' : 'Start')}
+            </button>
         </div>
     );
 }

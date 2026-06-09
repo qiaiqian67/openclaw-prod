@@ -308,6 +308,193 @@ body::before {
   color: var(--text-secondary);
 }
 
+/* ═══════════════════════════════════════════════════════
+   Theme: Claude (Coral + Cream, from client/design/claude.md)
+   Warm cream canvas, Anthropic signature coral accent.
+   ═══════════════════════════════════════════════════════ */
+[data-theme="claude"] {
+  --bg-primary: #faf9f5;
+  --bg-secondary: #f5f0e8;
+  --bg-tertiary: #efe9de;
+  --bg-elevated: #efe9de;
+  --bg-hover: #f0e9db;
+  --bg-active: #e8e0d2;
+
+  --border-default: #e6dfd8;
+  --border-subtle: #ebe6df;
+  --border-strong: #d4c9b8;
+
+  --text-primary: #141413;
+  --text-secondary: #3d3d3a;
+  --text-tertiary: #6c6a64;
+  --text-inverse: #faf9f5;
+
+  --accent-primary: #cc785c;
+  --accent-hover: #a9583e;
+  --accent-subtle: rgba(204, 120, 92, 0.10);
+  --accent-text: #cc785c;
+
+  --segment-active-bg: var(--bg-elevated);
+  --segment-active-text: var(--text-primary);
+
+  --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236c6a64' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M6 9l6 6l6 -6'/%3E%3C/svg%3E");
+
+  --success: #5db872;
+  --success-subtle: rgba(93, 184, 114, 0.10);
+  --warning: #d97706;
+  --warning-subtle: rgba(217, 119, 6, 0.10);
+  --error: #c64545;
+  --error-subtle: rgba(198, 69, 69, 0.10);
+  --info: #4a72c5;
+  --info-subtle: rgba(74, 114, 197, 0.10);
+  --info-card-accent: #d4a574;
+  --info-card-accent-end: #e0a868;
+
+  --status-running: #5db872;
+  --status-idle: #6c6a64;
+  --status-stopped: #b0a89a;
+  --status-error: #c64545;
+
+  --shadow-sm: 0 1px 3px rgba(60, 40, 20, 0.06);
+  --shadow-md: 0 4px 12px rgba(60, 40, 20, 0.10);
+  --shadow-lg: 0 8px 24px rgba(60, 40, 20, 0.14);
+
+  --notification-bar-text: #faf9f5;
+  --notification-bar-close-hover: rgba(0, 0, 0, 0.10);
+}
+
+[data-theme="claude"] .btn-primary { color: #ffffff; }
+[data-theme="claude"] .btn-secondary {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
+}
+
+/* ═══════════════════════════════════════════════════════
+   Theme: MiniMax (Black Pill + Pure White, from client/design/minimax.md)
+   High-contrast white canvas with near-black primary.
+   ═══════════════════════════════════════════════════════ */
+[data-theme="minimax"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7f8fa;
+  --bg-tertiary: #f2f3f5;
+  --bg-elevated: #ffffff;
+  --bg-hover: #f2f3f5;
+  --bg-active: #e5e7eb;
+
+  --border-default: #e5e7eb;
+  --border-subtle: #eaecf0;
+  --border-strong: #d1d5db;
+
+  --text-primary: #0a0a0a;
+  --text-secondary: #222222;
+  --text-tertiary: #5f5f5f;
+  --text-inverse: #ffffff;
+
+  --accent-primary: #0a0a0a;
+  --accent-hover: #222222;
+  --accent-subtle: rgba(10, 10, 10, 0.06);
+  --accent-text: #0a0a0a;
+
+  --segment-active-bg: var(--accent-primary);
+  --segment-active-text: #ffffff;
+
+  --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%235f5f5f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M6 9l6 6l6 -6'/%3E%3C/svg%3E");
+
+  --success: #1ba673;
+  --success-subtle: rgba(27, 166, 115, 0.10);
+  --warning: #d97706;
+  --warning-subtle: rgba(217, 119, 6, 0.10);
+  --error: #d45656;
+  --error-subtle: rgba(212, 86, 86, 0.10);
+  --info: #1456f0;
+  --info-subtle: rgba(20, 86, 240, 0.10);
+  --info-card-accent: #1456f0;
+  --info-card-accent-end: #ea5ec1;
+
+  --status-running: #1ba673;
+  --status-idle: #8e8e93;
+  --status-stopped: #d0d0d8;
+  --status-error: #d45656;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.10);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16);
+
+  --notification-bar-text: #ffffff;
+  --notification-bar-close-hover: rgba(255, 255, 255, 0.20);
+}
+
+[data-theme="minimax"] .btn-primary { color: #ffffff; }
+[data-theme="minimax"] .btn-secondary {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
+}
+
+/* ═══════════════════════════════════════════════════════
+   Theme: Apple (Action Blue + Pure White, from client/design/apple.md)
+   Photography-first, single-color discipline (#0066cc),
+   museum-grade whitespace, single signature shadow.
+   ═══════════════════════════════════════════════════════ */
+[data-theme="apple"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f7;
+  --bg-tertiary: #fafafc;
+  --bg-elevated: #ffffff;
+  --bg-hover: #f5f5f7;
+  --bg-active: #ececee;
+
+  --border-default: #e0e0e0;
+  --border-subtle: #f0f0f0;
+  --border-strong: #c7c7cc;
+
+  --text-primary: #1d1d1f;
+  --text-secondary: #333333;
+  --text-tertiary: #7a7a7a;
+  --text-inverse: #ffffff;
+
+  --accent-primary: #0066cc;
+  --accent-hover: #0071e3;
+  --accent-subtle: rgba(0, 102, 204, 0.08);
+  --accent-text: #0066cc;
+
+  --segment-active-bg: var(--bg-secondary);
+  --segment-active-text: var(--text-primary);
+
+  --select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%237a7a7a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M6 9l6 6l6 -6'/%3E%3C/svg%3E");
+
+  --success: #1ba673;
+  --success-subtle: rgba(27, 166, 115, 0.10);
+  --warning: #d4a017;
+  --warning-subtle: rgba(212, 160, 23, 0.10);
+  --error: #d45656;
+  --error-subtle: rgba(212, 86, 86, 0.10);
+  --info: #0066cc;
+  --info-subtle: rgba(0, 102, 204, 0.08);
+  --info-card-accent: #0066cc;
+  --info-card-accent-end: #2997ff;
+
+  --status-running: #1ba673;
+  --status-idle: #7a7a7a;
+  --status-stopped: #c7c7cc;
+  --status-error: #d45656;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.12);
+
+  --notification-bar-text: #ffffff;
+  --notification-bar-close-hover: rgba(0, 0, 0, 0.10);
+}
+
+[data-theme="apple"] .btn-primary { color: #ffffff; }
+[data-theme="apple"] .btn-secondary {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
+}
+
 [data-theme="light"] .btn-secondary:hover {
   background: var(--bg-hover);
   border-color: var(--border-strong);
@@ -591,7 +778,7 @@ select:focus {
   background: var(--bg-secondary);
 }
 
-/* Custom scrollbar for sidebar */
+/* Custom scrollbar for sidebar (the canonical style — other scroll areas mirror this) */
 .sidebar-scrollable::-webkit-scrollbar {
   width: 4px;
 }
@@ -960,8 +1147,12 @@ select:focus {
 }
 
 .tenant-switcher-list::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
+  background: transparent;
   border-radius: 4px;
+}
+
+.tenant-switcher-list:hover::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
 }
 
 .tenant-switcher-item,
@@ -1526,9 +1717,17 @@ select:focus {
   width: 4px;
 }
 
+.sidebar-agent-drawer-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 .sidebar-agent-drawer-list::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
+  background: transparent;
   border-radius: 4px;
+}
+
+.sidebar-agent-drawer-list:hover::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
 }
 
 .sidebar-agent-item.drawer-agent {
@@ -1711,13 +1910,10 @@ select:focus {
   overflow-y: auto;
   box-sizing: border-box;
   transition: all var(--transition-default);
-  /* Hover-only scrollbar: hidden by default, fades in on hover */
-  scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
 }
 
 .main-content::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 .main-content::-webkit-scrollbar-track {
@@ -1726,16 +1922,11 @@ select:focus {
 
 .main-content::-webkit-scrollbar-thumb {
   background: transparent;
-  border-radius: 3px;
-  transition: background 160ms ease;
+  border-radius: 4px;
 }
 
 .main-content:hover::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.18);
-}
-
-.main-content:hover {
-  scrollbar-color: rgba(0, 0, 0, 0.18) transparent;
+  background: var(--border-strong);
 }
 
 /* Chat page needs a fixed viewport height so the inner chat-messages
@@ -9236,4 +9427,270 @@ select:focus {
   .fox-agent {
     transition: left 0.4s linear, top 0.4s linear;
   }
+}
+
+/* ── Plaza header 右侧 segmented tab(参考 OKR 页面) ── */
+.plaza-tab-segmented {
+  display: flex;
+  align-items: center;
+  background: var(--bg-secondary);
+  padding: 2px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.plaza-tab-segmented-btn {
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  outline: none;
+}
+
+.plaza-tab-segmented-btn:hover:not(.active) {
+  color: var(--text-primary);
+}
+
+.plaza-tab-segmented-btn.active {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* ── 招聘广场子视图 ── */
+.talent-market-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.talent-market-search-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.talent-market-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  width: 300px;
+  max-width: 100%;
+  flex-shrink: 0;
+}
+
+.talent-market-search input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 13px;
+  height: 100%;
+  font-family: inherit;
+}
+
+.talent-market-search-clear {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-tertiary);
+  padding: 0;
+  display: flex;
+}
+
+.talent-market-search-clear:hover {
+  color: var(--text-primary);
+}
+
+.talent-market-subtabs {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border-subtle);
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.talent-market-subtab {
+  padding: 10px 16px;
+  margin-bottom: -1px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 120ms, border-color 120ms;
+  outline: none;
+  font-family: inherit;
+}
+
+.talent-market-subtab[aria-selected="true"] {
+  color: var(--text-primary);
+  border-bottom-color: var(--text-primary);
+}
+
+.talent-market-subtab:hover:not([aria-selected="true"]) {
+  color: var(--text-primary);
+}
+
+.talent-market-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  align-content: start;
+}
+
+.talent-market-grid-empty {
+  grid-column: 1 / -1;
+  padding: 60px 40px;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+.talent-market-card {
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  transition: border-color 120ms;
+  min-height: 200px;
+  position: relative;
+}
+
+.talent-market-card:hover {
+  border-color: var(--accent-primary);
+}
+
+.talent-market-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  letter-spacing: 0.04em;
+  color: var(--text-primary);
+  position: relative;
+  z-index: 1;
+}
+
+.talent-market-card-name {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.talent-market-card-category {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.talent-market-card-bullets {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex: 1;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.talent-market-card-bullets li {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.talent-market-card-bullet-dot {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.talent-market-card-desc {
+  margin: 0;
+  flex: 1;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  position: relative;
+  z-index: 1;
+}
+
+.talent-market-card-hint {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-tertiary);
+  font-size: 11.5px;
+  line-height: 1.2;
+  position: relative;
+  z-index: 1;
+}
+
+.talent-market-card-custom {
+  border: 1.5px dashed var(--border-subtle);
+  cursor: pointer;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.97) 0%, rgba(255, 255, 255, 0.92) 54%, rgba(249, 246, 238, 0.82) 100%);
+  transition: border-color 120ms, background 120ms;
+  position: relative;
+  overflow: hidden;
+}
+
+.talent-market-card-custom:hover {
+  border-color: var(--accent-primary);
+}
+
+[data-theme="dark"] .talent-market-card-custom {
+  background: linear-gradient(135deg, rgba(40, 40, 40, 0.97) 0%, rgba(35, 35, 35, 0.92) 54%, rgba(30, 30, 30, 0.82) 100%);
+}
+
+.talent-market-card-custom-bg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 140px;
+  height: 140px;
+  background-repeat: no-repeat;
+  background-position: right -30px top -20px;
+  background-size: 200px auto;
+  opacity: 0.25;
+  pointer-events: none;
+  border-radius: 0 10px 10px 0;
+  z-index: 0;
+}
+
+.talent-market-footer {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  padding: 8px 0 0;
+  border-top: 1px solid var(--border-subtle);
+  margin-top: 8px;
+  padding-top: 14px;
 }

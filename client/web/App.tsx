@@ -24,7 +24,6 @@ const AdminCompanies = lazy(() => import('./pages/AdminCompanies'));
 const OAuthCallback = lazy(() => import('./pages/OAuthCallback'));
 const SSOEntry = lazy(() => import('./pages/SSOEntry'));
 const OKR = lazy(() => import('./pages/OKR'));
-const MyCompany = lazy(() => import('./pages/MyCompany'));
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
     const token = useAuthStore((s) => s.token);
@@ -309,7 +308,7 @@ export default function App() {
                     <Route path="messages" element={<Messages />} />
                     <Route path="enterprise" element={<CompanyAdminRoute><EnterpriseSettings /></CompanyAdminRoute>} />
                     <Route path="okr" element={<OKR />} />
-                    <Route path="my-company" element={<MyCompany />} />
+                    <Route path="my-company" element={<Navigate to="/dashboard?view=company" replace />} />
                     <Route path="invitations" element={<InvitationCodes />} />
                     <Route path="admin/platform-settings" element={<AdminCompanies />} />
                 </Route>
