@@ -409,8 +409,8 @@ body::before {
   --error-subtle: rgba(212, 86, 86, 0.10);
   --info: #1456f0;
   --info-subtle: rgba(20, 86, 240, 0.10);
-  --info-card-accent: #1456f0;
-  --info-card-accent-end: #ea5ec1;
+  --info-card-accent: #ff5530;
+  --info-card-accent-end: #1456f0;
 
   --status-running: #1ba673;
   --status-idle: #8e8e93;
@@ -423,6 +423,18 @@ body::before {
 
   --notification-bar-text: #ffffff;
   --notification-bar-close-hover: rgba(255, 255, 255, 0.20);
+
+  /* Brand spectrum — the signature MiniMax "vibrant gradient" tokens
+     (coral → magenta → purple → blue). Used sparingly on stripes,
+     active states, badges, and avatars to inject brand voltage without
+     flooding chrome. */
+  --brand-coral: #ff5530;
+  --brand-magenta: #ea5ec1;
+  --brand-purple: #a855f7;
+  --brand-blue: #1456f0;
+  --brand-cyan: #3daeff;
+  --brand-spectrum: linear-gradient(100deg, #ff5530 0%, #ea5ec1 35%, #a855f7 65%, #1456f0 100%);
+  --brand-spectrum-soft: linear-gradient(135deg, rgba(255, 85, 48, 0.10), rgba(234, 94, 193, 0.10), rgba(168, 85, 247, 0.10), rgba(20, 86, 240, 0.10));
 }
 
 [data-theme="minimax"] .btn-primary { color: #ffffff; }
@@ -430,6 +442,128 @@ body::before {
   background: var(--bg-elevated);
   border: 1px solid var(--border-default);
   color: var(--text-secondary);
+}
+
+/* ═══════════════════════════════════════════════════════
+   MiniMax — Brand-spectrum visual upgrades
+   Per client/design/minimax.md: vibrant gradient cards (orange-red,
+   magenta, purple, blue) turn each surface into a distinctive
+   visual identity. We apply the spectrum through small, high-impact
+   touchpoints — top stripe, active nav bar, button edge, avatar
+   fill, badges, status glow, gradient logo — so the chrome keeps
+   its white-canvas restraint while gaining unmistakable brand DNA.
+   ═══════════════════════════════════════════════════════ */
+
+/* 1. Top of sidebar: 3px brand-spectrum strip (anchors the brand
+      at the uppermost edge without crowding the nav). */
+[data-theme="minimax"] .sidebar-top {
+  background-image: var(--brand-spectrum), var(--bg-secondary);
+  background-repeat: no-repeat, no-repeat;
+  background-size: 100% 3px, 100% 100%;
+  background-position: top, bottom;
+}
+
+/* 2. Active sidebar nav item: 3px left brand bar + soft brand
+      gradient wash + magenta icon + bolder weight. */
+[data-theme="minimax"] .sidebar-item.active {
+  position: relative;
+  background: linear-gradient(90deg, rgba(234, 94, 193, 0.12) 0%, rgba(20, 86, 240, 0.06) 60%, transparent 100%);
+  color: #0a0a0a;
+  font-weight: 600;
+}
+[data-theme="minimax"] .sidebar-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 5px;
+  bottom: 5px;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background: var(--brand-spectrum);
+}
+[data-theme="minimax"] .sidebar-item.active .sidebar-item-icon {
+  color: #ea5ec1;
+}
+
+/* 3. Primary button: dark base preserved, brand-spectrum 2px
+      accent strip at the bottom edge + dual-color glow on hover. */
+[data-theme="minimax"] .btn-primary {
+  position: relative;
+  border: none;
+}
+[data-theme="minimax"] .btn-primary::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--brand-spectrum);
+  border-radius: 0 0 6px 6px;
+  pointer-events: none;
+  opacity: 0.9;
+}
+[data-theme="minimax"] .btn-primary:hover {
+  box-shadow:
+    0 6px 20px -4px rgba(234, 94, 193, 0.38),
+    0 2px 8px rgba(20, 86, 240, 0.28);
+}
+
+/* 4. Workspace avatar (no logo / initial letter): brand spectrum
+      fill + blue brand glow. Custom tones (tone-2..6) keep their
+      personal colors. */
+[data-theme="minimax"] .workspace-switcher-avatar,
+[data-theme="minimax"] .workspace-switcher-avatar.tone-1 {
+  background: var(--brand-spectrum);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 2px 8px -1px rgba(20, 86, 240, 0.30);
+}
+
+/* 5. Status dot running: subtle brand glow ring. */
+[data-theme="minimax"] .status-dot.running {
+  box-shadow:
+    0 0 0 2px rgba(27, 166, 115, 0.22),
+    0 0 8px rgba(27, 166, 115, 0.45);
+}
+
+/* 6. Info badge: solid brand spectrum (replaces flat blue). */
+[data-theme="minimax"] .badge-info {
+  background: var(--brand-spectrum);
+  color: #ffffff;
+  border: none;
+}
+
+/* 7. Sidebar divider line: brand gradient at low opacity. */
+[data-theme="minimax"] .sidebar-divider {
+  background: var(--brand-spectrum);
+  height: 1px;
+  opacity: 0.42;
+}
+
+/* 8. Notification bar: dark→deep-purple→dark sweep. */
+[data-theme="minimax"] .notification-bar {
+  background: linear-gradient(90deg, #0a0a0a 0%, #1a0a22 50%, #0a0a0a 100%);
+}
+
+/* 9. Sidebar logo: brand-gradient text via background-clip
+      (premium, restrained — single line of color). */
+[data-theme="minimax"] .sidebar-logo {
+  background: var(--brand-spectrum);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* 10. Sidebar section title: brand-tinted small caps (subtle). */
+[data-theme="minimax"] .sidebar-section-title {
+  background: var(--brand-spectrum);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0.75;
 }
 
 /* ═══════════════════════════════════════════════════════
