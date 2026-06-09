@@ -95,6 +95,13 @@
   - 添加日期：2026-06-08
   - 完成日期：2026-06-09
 
+- [x] **【已完成】** 客户端主题系统 — 新增 Apple 主题（5 套循环）+ MiniMax 品牌色谱升级
+  - 描述：1) 按 `client/design/apple.md` 17 个 token 1:1 落地 Apple 主题（纯白 + Action Blue #0066cc + 博物馆级留白），写入 `[data-theme="apple"]` CSS 块；2) `Layout.tsx` `THEME_CYCLE` 从 4 扩到 5，加 `IconCamera` 图标（呼应 photography-first 语汇）；3) `i18n/en.json` + `i18n/zh.json` 加 `common.appleMode`；4) MiniMax 主题加 5 品牌色 + 2 渐变 + 10 处视觉锚点（顶色谱条、active 左条+洋红图标、btn 底条+双光晕、avatar 色谱、status 光环、badge 色谱、divider 色谱线、notification 紫渐变、logo 渐变字、section-title 渐变字），从"无印良品黑白"升到"vibrant gradient"；5) 全部改动锁在 `[data-theme=X]` 作用域，零结构/零布局/零主键变更；6) 完整 electron 打包验证：`release/DeerClaw Client Setup 0.1.0.exe` 73 MB + `DeerClaw Client 0.1.0.exe` 73 MB
+  - 涉及文件/模块：client/web/index.css、client/web/pages/Layout.tsx、client/web/i18n/{en,zh}.json
+  - 添加日期：2026-06-09
+  - 完成日期：2026-06-09
+  - 详见：`client/DEV-NOTES-THEMES.md`
+
 ## 低优先级
 
 > 锦上添花、优化重构、技术债清理
