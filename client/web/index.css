@@ -107,6 +107,7 @@
   --tab-active-color: #e1e1e8;
   --tab-hover-color: #c8c8d0;
   --tab-active-soft: rgba(225, 225, 232, 0.12);
+  --btn-primary-text: #0a0a0f;
 
   /* OKR donut — dark theme uses near-white gradient segments so
      the ring reads as a luminous progress arc on the dark canvas. */
@@ -315,6 +316,7 @@ body::before {
   --tab-active-color: #1a1a1a;
   --tab-hover-color: #444444;
   --tab-active-soft: rgba(26, 26, 26, 0.06);
+  --btn-primary-text: #ffffff;
 
   /* OKR donut — light theme uses near-black ink tints, gradient
      from deepest (completed) to lightest (behind). */
@@ -322,18 +324,6 @@ body::before {
   --okr-at-risk:   #71717a;
   --okr-behind:    #a1a1aa;
   --okr-completed: #18181b;
-}
-
-/* Light-mode overrides: primary button uses dark bg → white text */
-[data-theme="light"] .btn-primary {
-  color: #ffffff;
-}
-
-/* Light-mode secondary button — keep neutral gray style */
-[data-theme="light"] .btn-secondary {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-default);
-  color: var(--text-secondary);
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -409,6 +399,7 @@ body::before {
   --tab-active-color: #cc785c;
   --tab-hover-color: #b86948;
   --tab-active-soft: rgba(204, 120, 92, 0.12);
+  --btn-primary-text: #ffffff;
 
   /* OKR donut — claude theme uses its 3 brand colors (coral / amber /
      teal) plus a deeper teal for "completed". Reads as a warm ring
@@ -419,12 +410,6 @@ body::before {
   --okr-completed: #2e7565;
 }
 
-[data-theme="claude"] .btn-primary { color: #ffffff; }
-[data-theme="claude"] .btn-secondary {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-default);
-  color: var(--text-secondary);
-}
 
 /* ═══════════════════════════════════════════════════════
    Claude — Warm editorial brand-spectrum visual upgrades
@@ -472,24 +457,11 @@ body::before {
   color: var(--brand-coral);
 }
 
-/* 3. Primary button: coral base preserved, brand-spectrum 2px
-      accent strip at the bottom edge + soft coral glow on hover. */
-[data-theme="claude"] .btn-primary {
-  position: relative;
-  border: none;
-}
-[data-theme="claude"] .btn-primary::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 2px;
-  background: var(--brand-spectrum);
-  border-radius: 0 0 6px 6px;
-  pointer-events: none;
-  opacity: 0.9;
-}
+/* 3. Primary button: base .btn-primary already reads --accent-primary
+      (coral on claude) and --accent-hover (darker coral). We only
+      add the hover-glow halo so the press feedback matches the brand
+      spectrum. No bottom-edge stripe here — that decorative gradient
+      lived only on minimax for visual differentiation. */
 [data-theme="claude"] .btn-primary:hover {
   box-shadow:
     0 6px 20px -4px rgba(204, 120, 92, 0.32),
@@ -628,6 +600,7 @@ body::before {
   --tab-active-color: #ea5ec1;
   --tab-hover-color: #ff5530;
   --tab-active-soft: rgba(234, 94, 193, 0.12);
+  --btn-primary-text: #ffffff;
 
   /* OKR donut — minimax theme uses its 4-stop vibrant spectrum
      (coral → magenta → purple → blue) in the same order as the
@@ -637,13 +610,6 @@ body::before {
   --okr-at-risk:   #a855f7;
   --okr-behind:    #ea5ec1;
   --okr-completed: #ff5530;
-}
-
-[data-theme="minimax"] .btn-primary { color: #ffffff; }
-[data-theme="minimax"] .btn-secondary {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-default);
-  color: var(--text-secondary);
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -687,15 +653,15 @@ body::before {
   color: #ea5ec1;
 }
 
-/* 3. Primary button: dark base preserved, brand-spectrum 2px
-      accent strip at the bottom edge + dual-color glow on hover.
-      The "brighten on default / deepen on press" micro-feedback
-      the user asked for: default lifts 1 shade from #0a0a0a to
-      a subtle violet-tinted dark, hover deepens to near-black
-      with a vivid brand glow halo. */
+/* 3. Primary button — minimax keeps the dark base (per minimax
+      spec: "dark base + single highlight"). The "brighten on
+      default / deepen on press" feedback the user asked for lives
+      here: default lifts to #1a1a22 with a subtle violet-tinted
+      ring, hover deepens to #050507 with a vivid magenta/blue
+      brand glow halo. Base .btn-primary already handles color
+      via --accent-primary. */
 [data-theme="minimax"] .btn-primary {
   position: relative;
-  border: none;
   background: #1a1a22;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
@@ -898,9 +864,9 @@ body::before {
   --text-tertiary: #7a7a7a;
   --text-inverse: #ffffff;
 
-  --accent-primary: #0066cc;
-  --accent-hover: #0071e3;
-  --accent-subtle: rgba(0, 102, 204, 0.08);
+  --accent-primary: #2997ff;
+  --accent-hover: #5ac8fa;
+  --accent-subtle: rgba(41, 151, 255, 0.12);
   --accent-text: #0066cc;
 
   --segment-active-bg: var(--bg-secondary);
@@ -960,6 +926,7 @@ body::before {
   --tab-active-color: #2997ff;
   --tab-hover-color: #0071e3;
   --tab-active-soft: rgba(41, 151, 255, 0.12);
+  --btn-primary-text: #ffffff;
 
   /* OKR donut — apple theme stays within the blue family (Sky Link
      + Focus + iOS system) since the design system forbids a second
@@ -1025,19 +992,16 @@ body::before {
   color: #0066cc;
 }
 
-/* 3. Primary button: Sky Link Blue base (brighter on white) +
-      1px iOS system blue bottom-edge highlight (Apple's
-      signature "1px of light" UI cue) + soft blue glow on
-      hover that lifts to iOS system blue. */
+/* 3. Primary button — base .btn-primary already reads
+      --accent-primary (Sky Link Blue #2997ff) and --accent-hover
+      (#5ac8fa iOS system blue) after the token upgrade. We only
+      add the 1px iOS highlight at the bottom edge + soft blue
+      hover glow so the press feedback matches the brand. */
 [data-theme="apple"] .btn-primary {
   position: relative;
-  background: #2997ff;
-  color: #ffffff;
-  border: none;
   box-shadow: inset 0 -1px 0 rgba(90, 200, 250, 0.7);
 }
 [data-theme="apple"] .btn-primary:hover {
-  background: #5ac8fa;
   box-shadow:
     0 6px 18px -4px rgba(41, 151, 255, 0.42),
     inset 0 -1px 0 rgba(255, 255, 255, 0.5);
@@ -1103,13 +1067,6 @@ body::before {
 [data-theme="apple"] .sidebar-section-title {
   color: #2997ff;
   opacity: 0.85;
-}
-
-[data-theme="apple"] .btn-primary { color: #ffffff; }
-[data-theme="apple"] .btn-secondary {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-default);
-  color: var(--text-secondary);
 }
 
 [data-theme="light"] .btn-secondary:hover {
@@ -2747,10 +2704,15 @@ select:focus {
   white-space: nowrap;
 }
 
+/* Buttons — single source of truth via tokens.
+   - background comes from --accent-primary per theme
+   - hover state comes from --accent-hover per theme
+   - text color comes from --btn-primary-text per theme
+     (dark theme uses dark text on near-white bg; all other
+     themes use white text on saturated brand color) */
 .btn-primary {
   background: var(--accent-primary);
-  /* Dark theme: near-white bg → needs dark text for contrast */
-  color: #0a0a0f;
+  color: var(--btn-primary-text, #ffffff);
 }
 
 .btn-primary:hover {
@@ -2760,8 +2722,8 @@ select:focus {
 
 .btn-secondary {
   background: var(--bg-elevated);
-  border: 1px solid var(--border-strong);
-  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
 }
 
 .btn-secondary:hover {
@@ -3029,13 +2991,16 @@ select:focus {
   font-weight: 600;
 }
 
-/* Session sidebar admin tabs — segment control style */
+/* Session sidebar admin tabs — borderless segment control
+   that mirrors .plaza-tab-segmented / .tool-source-tabs:
+   soft brand-color wash + per-theme brand-color label. Same
+   tokens so the whole app speaks one tab voice. */
 .session-sidebar-segment-control {
   display: flex;
   margin: 0 12px 8px;
   padding: 2px;
   height: 28px;
-  background: var(--accent-subtle);
+  background: var(--bg-secondary);
   border-radius: 6px;
   border: 1px solid var(--border-subtle);
   box-sizing: border-box;
@@ -3060,13 +3025,13 @@ select:focus {
 }
 
 .session-sidebar-segment-control .segment-item:hover {
-  color: var(--text-secondary);
+  color: var(--tab-hover-color, var(--text-secondary));
 }
 
 .session-sidebar-segment-control .segment-item.active {
-  background: var(--segment-active-bg);
-  color: var(--segment-active-text);
-  font-weight: 500;
+  background: var(--tab-active-soft, var(--segment-active-bg));
+  color: var(--tab-active-color, var(--segment-active-text));
+  font-weight: 600;
 }
 
 /* Custom scope dropdown */
@@ -9034,7 +8999,11 @@ select:focus {
   display: flex;
 }
 
-/* Tool source tabs */
+/* Tool source tabs — borderless segmented control that mirrors
+   .plaza-tab-segmented: pill track + soft brand-color wash on
+   the active button + per-theme brand-color label. Same tokens
+   as the rest of the tab family so the whole app speaks one
+   voice. */
 .tool-source-tabs {
   display: inline-flex;
   align-self: flex-start;
@@ -9068,14 +9037,15 @@ select:focus {
 }
 
 .tool-source-tabs button:hover {
-  color: var(--text-secondary);
+  color: var(--tab-hover-color, var(--text-secondary));
   background: var(--bg-tertiary);
 }
 
 .tool-source-tabs button.active {
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  background: var(--tab-active-soft, var(--bg-primary));
+  color: var(--tab-active-color, var(--accent-primary));
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+  font-weight: 700;
 }
 
 .tool-source-tabs button:focus {
@@ -9083,7 +9053,7 @@ select:focus {
 }
 
 .tool-source-tabs button:focus-visible {
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.18);
+  box-shadow: 0 0 0 2px var(--tab-active-soft, rgba(99, 102, 241, 0.18));
 }
 
 .tool-source-tab-count {
@@ -9099,8 +9069,8 @@ select:focus {
 }
 
 .tool-source-tabs button.active .tool-source-tab-count {
-  background: var(--bg-secondary);
-  color: var(--text-secondary);
+  background: var(--tab-active-soft, var(--bg-secondary));
+  color: var(--tab-active-color, var(--text-secondary));
 }
 
 .enterprise-tool-source-tabs {
@@ -10223,6 +10193,11 @@ select:focus {
   color: var(--text-primary);
 }
 
+/* Talent market sub-tabs — aligned with the global bordered (.tab)
+   family: underline + per-theme brand color. Used inside the
+   招聘广场 to filter by category. Same --tab-active-color /
+   --tab-hover-color tokens as EnterpriseSettings / AdminCompanies
+   so the entire app speaks one tab voice. */
 .talent-market-subtabs {
   display: flex;
   flex-wrap: wrap;
@@ -10248,12 +10223,13 @@ select:focus {
 }
 
 .talent-market-subtab[aria-selected="true"] {
-  color: var(--text-primary);
-  border-bottom-color: var(--text-primary);
+  color: var(--tab-active-color, var(--accent-primary));
+  border-bottom-color: var(--tab-active-color, var(--accent-primary));
+  font-weight: 600;
 }
 
 .talent-market-subtab:hover:not([aria-selected="true"]) {
-  color: var(--text-primary);
+  color: var(--tab-hover-color, var(--text-primary));
 }
 
 .talent-market-grid {
