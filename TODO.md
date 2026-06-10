@@ -121,3 +121,11 @@
   - 描述：补全 auth_provider.py 中 Teams 的三个占位方法
   - 涉及文件/模块：backend/app/services/auth_provider.py:766-772
   - 完成日期：YYYY-MM-DD
+1、所有主题控制Tab标签颜色；
+2、minimax主题，按钮要在亮、
+
+深一些；3.minimax主题下智能体会话页面背景色太白了。4、智
+
+能体会话消息上下滚动条太宽了。5、智能体头像可不可以给个颜
+
+色？

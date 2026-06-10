@@ -100,6 +100,19 @@
   --notification-bar-bg: var(--accent-primary);
   --notification-bar-text: var(--bg-primary);
   --notification-bar-close-hover: rgba(0, 0, 0, 0.1);
+
+  /* Tab control — dark theme uses near-white accent for the
+     active tab text + 2px underline so the tab bar reads as
+     "on" without needing a color shift. */
+  --tab-active-color: #e1e1e8;
+  --tab-hover-color: #c8c8d0;
+
+  /* OKR donut — dark theme uses near-white gradient segments so
+     the ring reads as a luminous progress arc on the dark canvas. */
+  --okr-on-track:  #e1e1e8;
+  --okr-at-risk:   #a1a1aa;
+  --okr-behind:    #71717a;
+  --okr-completed: #ffffff;
 }
 
 /* ─── Notification Bar ──────────────────────────────── */
@@ -294,6 +307,19 @@ body::before {
   /* Light mode: notification bar always white text */
   --notification-bar-text: var(--bg-primary); /* For light mode, bg-primary is #fff */
   --notification-bar-close-hover: rgba(255, 255, 255, 0.2);
+
+  /* Tab control — light theme uses ink for active tab so
+     it stays consistent with the "Apple-style paper-white"
+     voice rather than introducing a blue on white. */
+  --tab-active-color: #1a1a1a;
+  --tab-hover-color: #444444;
+
+  /* OKR donut — light theme uses near-black ink tints, gradient
+     from deepest (completed) to lightest (behind). */
+  --okr-on-track:  #3f3f46;
+  --okr-at-risk:   #71717a;
+  --okr-behind:    #a1a1aa;
+  --okr-completed: #18181b;
 }
 
 /* Light-mode overrides: primary button uses dark bg → white text */
@@ -361,6 +387,33 @@ body::before {
 
   --notification-bar-text: #faf9f5;
   --notification-bar-close-hover: rgba(0, 0, 0, 0.10);
+
+  /* Brand spectrum — Claude's warm editorial 3-stop signature
+     (coral → amber → teal at 100deg). Used sparingly on stripes,
+     active states, badges, avatars, and dividers to inject brand
+     voltage without flooding the cream canvas. Hex values come
+     straight from client/design/claude.md (colors.primary /
+     colors.accent-amber / colors.accent-teal). */
+  --brand-coral: #cc785c;
+  --brand-amber: #e8a55a;
+  --brand-teal: #5db8a6;
+  --brand-spectrum: linear-gradient(100deg, #cc785c 0%, #e8a55a 50%, #5db8a6 100%);
+  --brand-spectrum-soft: linear-gradient(135deg, rgba(204, 120, 92, 0.10), rgba(232, 165, 90, 0.10), rgba(93, 184, 166, 0.10));
+
+  /* Tab control — claude theme's coral #cc785c is the
+     signature accent, so the active tab text + underline
+     pick it up to carry the brand voice through the
+     settings tab bar. */
+  --tab-active-color: #cc785c;
+  --tab-hover-color: #b86948;
+
+  /* OKR donut — claude theme uses its 3 brand colors (coral / amber /
+     teal) plus a deeper teal for "completed". Reads as a warm ring
+     that carries the editorial voice through the dashboard. */
+  --okr-on-track:  #5db8a6;
+  --okr-at-risk:   #e8a55a;
+  --okr-behind:    #cc785c;
+  --okr-completed: #2e7565;
 }
 
 [data-theme="claude"] .btn-primary { color: #ffffff; }
@@ -368,6 +421,135 @@ body::before {
   background: var(--bg-elevated);
   border: 1px solid var(--border-default);
   color: var(--text-secondary);
+}
+
+/* ═══════════════════════════════════════════════════════
+   Claude — Warm editorial brand-spectrum visual upgrades
+   Per client/design/claude.md: warm cream canvas + coral +
+   dark navy is the brand trinity. Amber + teal round out
+   the spectrum. We apply the 3-stop warm gradient through
+   small, high-impact touchpoints — top stripe, active nav
+   bar, button edge, avatar fill, badges, status glow,
+   notification bar, gradient logo — so the chrome keeps its
+   cream restraint while gaining unmistakable brand DNA.
+   Restrained by the 5 design rules in feedback-visual-density:
+   spectrum on edges/corners/badges/avatars (never flooding),
+   cream canvas as the base, tint at 8–12% opacity, 100deg
+   gradient angle, never overwriting tone-2..6 avatars.
+   ═══════════════════════════════════════════════════════ */
+
+/* 1. Top of sidebar: 3px warm brand-spectrum strip
+      (anchors the brand at the uppermost edge without crowding the nav). */
+[data-theme="claude"] .sidebar-top {
+  background-image: var(--brand-spectrum), var(--bg-secondary);
+  background-repeat: no-repeat, no-repeat;
+  background-size: 100% 3px, 100% 100%;
+  background-position: top, bottom;
+}
+
+/* 2. Active sidebar nav item: 3px left brand bar + soft warm wash
+      + coral icon + bolder weight. */
+[data-theme="claude"] .sidebar-item.active {
+  position: relative;
+  background: linear-gradient(90deg, rgba(204, 120, 92, 0.10) 0%, rgba(232, 165, 90, 0.06) 60%, transparent 100%);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+[data-theme="claude"] .sidebar-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 5px;
+  bottom: 5px;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background: var(--brand-spectrum);
+}
+[data-theme="claude"] .sidebar-item.active .sidebar-item-icon {
+  color: var(--brand-coral);
+}
+
+/* 3. Primary button: coral base preserved, brand-spectrum 2px
+      accent strip at the bottom edge + soft coral glow on hover. */
+[data-theme="claude"] .btn-primary {
+  position: relative;
+  border: none;
+}
+[data-theme="claude"] .btn-primary::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--brand-spectrum);
+  border-radius: 0 0 6px 6px;
+  pointer-events: none;
+  opacity: 0.9;
+}
+[data-theme="claude"] .btn-primary:hover {
+  box-shadow:
+    0 6px 20px -4px rgba(204, 120, 92, 0.32),
+    0 2px 8px rgba(232, 165, 90, 0.22);
+}
+
+/* 4. Workspace avatar (no logo / initial letter): warm spectrum
+      fill. Custom tones (tone-2..6) keep their personal colors. */
+[data-theme="claude"] .workspace-switcher-avatar,
+[data-theme="claude"] .workspace-switcher-avatar.tone-1 {
+  background: var(--brand-spectrum);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 2px 8px -1px rgba(204, 120, 92, 0.32);
+}
+
+/* 5. Status dot running: subtle brand glow ring (Claude uses the
+      teal accent #5db8a6 sparingly — here on the running status). */
+[data-theme="claude"] .status-dot.running {
+  box-shadow:
+    0 0 0 2px rgba(93, 184, 166, 0.22),
+    0 0 8px rgba(93, 184, 166, 0.45);
+}
+
+/* 6. Info badge: solid brand spectrum (replaces flat coral). */
+[data-theme="claude"] .badge-info {
+  background: var(--brand-spectrum);
+  color: #ffffff;
+  border: none;
+}
+
+/* 7. Sidebar divider line: brand gradient at low opacity. */
+[data-theme="claude"] .sidebar-divider {
+  background: var(--brand-spectrum);
+  height: 1px;
+  opacity: 0.38;
+}
+
+/* 8. Notification bar: warm cream → coral → amber sweep.
+      (Claude-specific — can't use the dark sweep of MiniMax because
+       the cream canvas is the brand; we use a warm sweep instead.) */
+[data-theme="claude"] .notification-bar {
+  background: linear-gradient(90deg, #faf9f5 0%, #cc785c 50%, #e8a55a 100%);
+}
+
+/* 9. Sidebar logo: brand-gradient text via background-clip
+      (premium, restrained — single line of warm color). */
+[data-theme="claude"] .sidebar-logo {
+  background: var(--brand-spectrum);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* 10. Sidebar section title: brand-tinted small caps (subtle). */
+[data-theme="claude"] .sidebar-section-title {
+  background: var(--brand-spectrum);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0.78;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -435,6 +617,22 @@ body::before {
   --brand-cyan: #3daeff;
   --brand-spectrum: linear-gradient(100deg, #ff5530 0%, #ea5ec1 35%, #a855f7 65%, #1456f0 100%);
   --brand-spectrum-soft: linear-gradient(135deg, rgba(255, 85, 48, 0.10), rgba(234, 94, 193, 0.10), rgba(168, 85, 247, 0.10), rgba(20, 86, 240, 0.10));
+
+  /* Tab control — minimax theme uses its magenta accent
+     (#ea5ec1) for the active tab so the previously-invisible
+     black underline becomes a vibrant brand line. Coral is
+     reserved for hover so hover doesn't read as "active". */
+  --tab-active-color: #ea5ec1;
+  --tab-hover-color: #ff5530;
+
+  /* OKR donut — minimax theme uses its 4-stop vibrant spectrum
+     (coral → magenta → purple → blue) in the same order as the
+     sidebar brand strip, so the donut looks like a tiny slice of
+     the brand identity on the dashboard. */
+  --okr-on-track:  #1456f0;
+  --okr-at-risk:   #a855f7;
+  --okr-behind:    #ea5ec1;
+  --okr-completed: #ff5530;
 }
 
 [data-theme="minimax"] .btn-primary { color: #ffffff; }
@@ -486,10 +684,18 @@ body::before {
 }
 
 /* 3. Primary button: dark base preserved, brand-spectrum 2px
-      accent strip at the bottom edge + dual-color glow on hover. */
+      accent strip at the bottom edge + dual-color glow on hover.
+      The "brighten on default / deepen on press" micro-feedback
+      the user asked for: default lifts 1 shade from #0a0a0a to
+      a subtle violet-tinted dark, hover deepens to near-black
+      with a vivid brand glow halo. */
 [data-theme="minimax"] .btn-primary {
   position: relative;
   border: none;
+  background: #1a1a22;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 0 0 1px rgba(234, 94, 193, 0.18);
 }
 [data-theme="minimax"] .btn-primary::after {
   content: '';
@@ -501,12 +707,15 @@ body::before {
   background: var(--brand-spectrum);
   border-radius: 0 0 6px 6px;
   pointer-events: none;
-  opacity: 0.9;
+  opacity: 1;
 }
 [data-theme="minimax"] .btn-primary:hover {
+  background: #050507;
   box-shadow:
-    0 6px 20px -4px rgba(234, 94, 193, 0.38),
-    0 2px 8px rgba(20, 86, 240, 0.28);
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    inset 0 0 0 1px rgba(234, 94, 193, 0.35),
+    0 8px 24px -4px rgba(234, 94, 193, 0.48),
+    0 3px 12px rgba(20, 86, 240, 0.36);
 }
 
 /* 4. Workspace avatar (no logo / initial letter): brand spectrum
@@ -566,6 +775,103 @@ body::before {
   opacity: 0.75;
 }
 
+/* 11. Chat page background — "too white" feedback fix.
+      The brand voice on minimax is a 4-stop vibrant gradient
+      (coral → magenta → purple → blue), but the chat-page
+      main-content inherits the flat --bg-primary #ffffff
+      which kills the brand. We layer two corner-anchored
+      radial gradients at 8–12% opacity (within the 5-rule
+      restraint principle) so the canvas reads as a warm
+      "vibrant wash" without affecting text contrast or
+      chat-bubble readability.
+
+      ⚠ Removed `background-attachment: local` — under certain
+      Chromium paint paths (notably when the chat-page
+      .main-content is the scroll container for a long
+      .chat-messages list) it caused a white-screen render
+      failure. Plain `background-attachment: scroll` (the
+      default) is safe and still produces the warm wash on
+      the initial paint. */
+[data-theme="minimax"] .main-content.chat-page {
+  background-color: var(--bg-primary);
+  background-image:
+    radial-gradient(ellipse 800px 600px at 0% 0%, rgba(255, 85, 48, 0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 700px 500px at 100% 100%, rgba(20, 86, 240, 0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 500px 400px at 100% 0%, rgba(168, 85, 247, 0.08) 0%, transparent 60%);
+}
+
+/* ═══════════════════════════════════════════════════════
+   Agent avatar — restored default style.
+   Per user feedback ("智能体头像多色谱太难看了"),
+   we drop the brand-spectrum / brand-blue solid fills
+   introduced earlier and go back to the neutral
+   --bg-tertiary gray background that ships from the base
+   stylesheet. Custom tone-2..tone-6 (user-set colors)
+   are untouched.
+
+   Implementation note: an earlier version of this block
+   chained all 5 themes into a single comma-separated
+   selector list (`.agent-avatar, [data-theme=dark]
+   .agent-avatar.tone-1, ...`), which after minification
+   produced a ~280-char selector. Under Electron 33's
+   bundled Chromium this caused the entire stylesheet to
+   fail parsing, leaving the app as a blank white page.
+   We split back into one rule per theme so the selector
+   chain stays under ~80 chars and matches every other
+   theme rule in the file.
+   ═══════════════════════════════════════════════════════ */
+
+[data-theme="dark"] .agent-avatar {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  box-shadow: none;
+}
+[data-theme="dark"] .agent-avatar.tone-1 {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  box-shadow: none;
+}
+[data-theme="light"] .agent-avatar {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  box-shadow: none;
+}
+[data-theme="light"] .agent-avatar.tone-1 {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  box-shadow: none;
+}
+[data-theme="claude"] .agent-avatar {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  box-shadow: none;
+}
+[data-theme="claude"] .agent-avatar.tone-1 {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  box-shadow: none;
+}
+[data-theme="minimax"] .agent-avatar {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  box-shadow: none;
+}
+[data-theme="minimax"] .agent-avatar.tone-1 {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  box-shadow: none;
+}
+[data-theme="apple"] .agent-avatar {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  box-shadow: none;
+}
+[data-theme="apple"] .agent-avatar.tone-1 {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  box-shadow: none;
+}
+
 /* ═══════════════════════════════════════════════════════
    Theme: Apple (Action Blue + Pure White, from client/design/apple.md)
    Photography-first, single-color discipline (#0066cc),
@@ -620,6 +926,178 @@ body::before {
 
   --notification-bar-text: #ffffff;
   --notification-bar-close-hover: rgba(0, 0, 0, 0.10);
+
+  /* Brand tokens — Apple is a "single accent" system. The
+     spec defines Action Blue #0066cc for buttons/links on
+     light surfaces and Sky Link Blue #2997ff for in-copy
+     links on dark surfaces — but on a pure-white canvas
+     (#0066cc reads noticeably darker than the brand looks
+     on Apple.com because of the dark-light contrast fall-
+     off). Per direct user feedback ("apple 蓝色不够亮"),
+     we promote Sky Link Blue #2997ff to the primary role
+     for filled surfaces (buttons, avatar, badge, logo,
+     section title, notification bar), keep Action Blue
+     #0066cc for the small chrome accents (active-icon,
+     left-bar, divider) where the darker tone reads as
+     "anchored" rather than "floating", and add iOS system
+     blue #5ac8fa as the hover sibling for the brighter
+     press. All three hexes are documented in
+     client/design/apple.md — no out-of-palette colors. */
+  --brand-blue: #2997ff;
+  --brand-blue-deep: #5ac8fa;
+  --brand-blue-action: #0066cc;
+  --brand-blue-soft: rgba(41, 151, 255, 0.10);
+  --brand-blue-glow: rgba(41, 151, 255, 0.32);
+
+  /* Tab control — apple theme uses Sky Link Blue #2997ff
+     (the brand primary on white canvas) for the active tab
+     text + underline. The bright blue reads as "果味" on
+     pure white and matches Apple's single-accent discipline. */
+  --tab-active-color: #2997ff;
+  --tab-hover-color: #0071e3;
+
+  /* OKR donut — apple theme stays within the blue family (Sky Link
+     + Focus + iOS system) since the design system forbids a second
+     accent color. Gradients from darkest (completed) to brightest
+     (at-risk) keep the ring readable. */
+  --okr-on-track:  #2997ff;
+  --okr-at-risk:   #5ac8fa;
+  --okr-behind:    #b3e0ff;
+  --okr-completed: #0066cc;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Apple-theme visual anchors — Sky Link Blue on edges, badges,
+   avatars, and active states only. The spec mandates a single
+   accent color and forbids decorative gradients, so unlike
+   claude/minimax this theme uses solid blue rather than a
+   multi-stop spectrum. The 10 anchors below mirror the
+   structure of the other themes so the visual rhythm is
+   consistent across the theme cycle, just calmer in palette.
+
+   Color choice rationale (per user feedback "apple 蓝色不够亮"):
+   - Filled surfaces (button / avatar / badge / logo /
+     section title / notification bar) use Sky Link Blue
+     #2997ff — brighter, more "果味" on white canvas.
+   - Small chrome accents (active-icon / left bar / divider)
+     keep Action Blue #0066cc — the darker tone reads as
+     "anchored" rather than "floating" at small sizes.
+   - Hover on primary button uses iOS system blue #5ac8fa —
+     the lighter press that signals "lifted" affordance.
+   ═══════════════════════════════════════════════════════ */
+
+/* 1. Top of sidebar: 2px Sky Link Blue strip — Apple's signature
+      edge anchor. Thinner than claude/minimax (2px vs 3px) to
+      keep the museum-gallery restraint the spec asks for. */
+[data-theme="apple"] .sidebar-top {
+  background-image: linear-gradient(180deg, #2997ff 0%, #2997ff 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 2px;
+  background-position: top;
+}
+
+/* 2. Active sidebar nav item: Action Blue left bar (kept darker
+      for anchored weight at 3px) + soft Sky Link Blue wash +
+      Action Blue icon. Replaces the default 8% tint that ships
+      from --accent-subtle. */
+[data-theme="apple"] .sidebar-item.active {
+  position: relative;
+  background: linear-gradient(90deg, rgba(41, 151, 255, 0.12) 0%, rgba(41, 151, 255, 0.05) 60%, transparent 100%);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+[data-theme="apple"] .sidebar-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 5px;
+  bottom: 5px;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background: #0066cc;
+}
+[data-theme="apple"] .sidebar-item.active .sidebar-item-icon {
+  color: #0066cc;
+}
+
+/* 3. Primary button: Sky Link Blue base (brighter on white) +
+      1px iOS system blue bottom-edge highlight (Apple's
+      signature "1px of light" UI cue) + soft blue glow on
+      hover that lifts to iOS system blue. */
+[data-theme="apple"] .btn-primary {
+  position: relative;
+  background: #2997ff;
+  color: #ffffff;
+  border: none;
+  box-shadow: inset 0 -1px 0 rgba(90, 200, 250, 0.7);
+}
+[data-theme="apple"] .btn-primary:hover {
+  background: #5ac8fa;
+  box-shadow:
+    0 6px 18px -4px rgba(41, 151, 255, 0.42),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* 4. Workspace avatar (no logo / initial letter): Sky Link Blue
+      fill. Custom tones (tone-2..6) keep their personal colors
+      per the spec's tone-preservation rule. */
+[data-theme="apple"] .workspace-switcher-avatar,
+[data-theme="apple"] .workspace-switcher-avatar.tone-1 {
+  background: #2997ff;
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 2px 8px -1px rgba(41, 151, 255, 0.42);
+}
+
+/* 5. Status dot idle (the default state seen most): subtle
+      Sky Link Blue glow ring — Apple runs quieter than the other
+      themes, so we tint the idle dot rather than running. */
+[data-theme="apple"] .status-dot.idle {
+  background: #2997ff;
+  box-shadow: 0 0 6px rgba(41, 151, 255, 0.6);
+}
+
+/* 6. Info badge: solid Sky Link Blue (replaces the 8% tint). */
+[data-theme="apple"] .badge-info {
+  background: #2997ff;
+  color: #ffffff;
+  border: none;
+}
+
+/* 7. Sidebar divider line: Action Blue at 45% opacity — the
+      classic "Apple hairline" look, just blue. Kept at
+      Action Blue because the divider is a 1px detail that
+      wants the more grounded, less luminous tone. */
+[data-theme="apple"] .sidebar-divider {
+  background: linear-gradient(90deg, transparent 0%, #0066cc 50%, transparent 100%);
+  height: 1px;
+  opacity: 0.5;
+}
+
+/* 8. Notification bar: extra-light blue → Sky Link Blue →
+      Action Blue sweep. Three blues ascending in saturation
+      — the signature "Apple cool" voice, brighter than the
+      previous warm sweep. */
+[data-theme="apple"] .notification-bar {
+  background: linear-gradient(90deg, #e8f4ff 0%, #5ac8fa 35%, #2997ff 70%, #0066cc 100%);
+}
+
+/* 9. Sidebar logo: solid Sky Link Blue (brighter brand read
+      than Action Blue on white). No gradient text — Apple
+      spec forbids decorative gradients and a solid brand-blue
+      logo is the "single accent" way. */
+[data-theme="apple"] .sidebar-logo {
+  color: #2997ff;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* 10. Sidebar section title: Sky Link Blue small caps at 85%
+      opacity — the calmest of the three themes' section titles
+      but still distinctly on-brand and noticeably brighter. */
+[data-theme="apple"] .sidebar-section-title {
+  color: #2997ff;
+  opacity: 0.85;
 }
 
 [data-theme="apple"] .btn-primary { color: #ffffff; }
@@ -2075,6 +2553,26 @@ select:focus {
   padding: 0;
 }
 
+/* Belt-and-braces: ensure the chat-page outer container also uses
+   the 4px hairline scrollbar pattern. .chat-messages owns the actual
+   scroll on chat-page (this container is overflow:hidden), but if
+   some screen sizes / live-panel modes let it scroll instead, the
+   outer surface should match .chat-messages and .sidebar-agent-drawer-list
+   so the chrome feels consistent. */
+.main-content.chat-page::-webkit-scrollbar {
+  width: 4px;
+}
+.main-content.chat-page::-webkit-scrollbar-track {
+  background: transparent;
+}
+.main-content.chat-page::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 4px;
+}
+.main-content.chat-page:hover::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+}
+
 .main-content.agent-settings-page {
   padding-top: 8px;
 }
@@ -2472,15 +2970,17 @@ select:focus {
   border-bottom: 2px solid transparent;
   transition: all var(--transition-fast);
   cursor: pointer;
+  position: relative;
 }
 
 .tab:hover {
-  color: var(--text-secondary);
+  color: var(--tab-hover-color, var(--text-secondary));
 }
 
 .tab.active {
-  color: var(--text-primary);
-  border-bottom-color: var(--accent-primary);
+  color: var(--tab-active-color, var(--accent-primary));
+  border-bottom-color: var(--tab-active-color, var(--accent-primary));
+  font-weight: 600;
 }
 
 /* Session sidebar admin tabs — segment control style */
@@ -7275,6 +7775,26 @@ select:focus {
   padding: var(--space-4) 0;
 }
 
+/* Narrow scrollbar inside the chat message list, identical
+   to .sidebar-agent-drawer-list so the two scroll surfaces
+   feel like one family. 4px wide, transparent by default,
+   hairline grey when the user is actively interacting with
+   the list. This matches the sidebar agent list pattern so
+   the chrome is coherent across surfaces. */
+.chat-messages::-webkit-scrollbar {
+  width: 4px;
+}
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+.chat-messages::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 4px;
+}
+.chat-messages:hover::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+}
+
 .chat-message {
   display: flex;
   gap: var(--space-3);
@@ -9563,7 +10083,14 @@ select:focus {
   }
 }
 
-/* ── Plaza header 右侧 segmented tab(参考 OKR 页面) ── */
+/* ── Plaza / Dashboard segmented tab ──
+   Used by both Plaza's view switch (智能体广场 / 招聘广场)
+   and Dashboard's overview/company switch. Per user feedback
+   ("招聘广场 tab 颜色要与其他设置页面一致"), we wire the
+   active state to the per-theme --tab-active-color token
+   so the active button picks up the brand voice (coral for
+   claude, magenta for minimax, sky blue for apple, etc.)
+   rather than reading as a flat white pill on a gray track. */
 .plaza-tab-segmented {
   display: flex;
   align-items: center;
@@ -9588,13 +10115,14 @@ select:focus {
 }
 
 .plaza-tab-segmented-btn:hover:not(.active) {
-  color: var(--text-primary);
+  color: var(--tab-hover-color, var(--text-primary));
 }
 
 .plaza-tab-segmented-btn.active {
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  background: var(--tab-active-color, var(--accent-primary));
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
 }
 
 /* ── 招聘广场子视图 ── */
@@ -9613,12 +10141,12 @@ select:focus {
   display: flex;
   align-items: center;
   gap: 8px;
-  height: 40px;
-  padding: 0 12px;
+  height: 32px;
+  padding: 0 10px;
   background: var(--bg-secondary);
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
-  width: 300px;
+  width: 280px;
   max-width: 100%;
   flex-shrink: 0;
 }
@@ -9630,7 +10158,7 @@ select:focus {
   border: none;
   outline: none;
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: 12px;
   height: 100%;
   font-family: inherit;
 }

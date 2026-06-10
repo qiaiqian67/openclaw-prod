@@ -151,8 +151,17 @@ function OKRSummaryCard() {
     }
     const total = allKRs.length;
 
-    // Donut chart data
-    const COLORS = { on_track: '#3f3f46', at_risk: '#71717a', behind: '#a1a1aa', completed: '#18181b' };
+    // Donut chart data — read brand colors from CSS variables so the
+    // four segments pick up each theme's palette (dark stays near-white
+    // gradient, light goes to ink tints, claude uses coral/amber/teal,
+    // minimax uses its 4-stop spectrum order, apple uses blue family).
+    // Per-theme values live in [data-theme="X"] blocks in index.css.
+    const COLORS = {
+      on_track:  'var(--okr-on-track)',
+      at_risk:   'var(--okr-at-risk)',
+      behind:    'var(--okr-behind)',
+      completed: 'var(--okr-completed)',
+    };
     const LABELS_ZH = { on_track: '按计划', at_risk: '有风险', behind: '落后', completed: '已完成' };
     const LABELS_EN = { on_track: 'On Track', at_risk: 'At Risk', behind: 'Behind', completed: 'Completed' };
     const labels = isChinese ? LABELS_ZH : LABELS_EN;
