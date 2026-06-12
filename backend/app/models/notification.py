@@ -20,7 +20,8 @@ class Notification(Base):
     agent_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("agents.id"), nullable=True, index=True)
     type: Mapped[str] = mapped_column(String(50), nullable=False)
     # Types: approval_pending, approval_resolved, plaza_comment, plaza_reply,
-    #        mention, broadcast, skill_install_request, skill_installed, system
+    #        mention, broadcast, skill_install_request, skill_installed, system,
+    #        agent_message
     title: Mapped[str] = mapped_column(String(200), nullable=False)
     body: Mapped[str] = mapped_column(Text, nullable=False, default="")
     link: Mapped[str | None] = mapped_column(String(500))  # Frontend route to navigate to

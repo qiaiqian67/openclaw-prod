@@ -27,6 +27,7 @@ var import_electron = require("electron");
 var import_electron_updater = require("electron-updater");
 var import_electron_store = __toESM(require("electron-store"));
 var import_path = __toESM(require("path"));
+var import_fs = __toESM(require("fs"));
 var store = new import_electron_store.default({
   defaults: {
     serverUrl: "http://localhost:8000/api",
@@ -63,8 +64,21 @@ function applyContentSecurityPolicy() {
     callback({ responseHeaders: headers });
   });
 }
-var TRAY_ICON_DATA_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAQ0lEQVR4nGNgGAWjYBSMghENGP///8/AwMDw//8fBgYGBob/X0CMRsgwKgaMxhgZGZj///8zMDD8//+fgYGBgYGB4T8DAwMDAwMDhmJgFAAAAABJRU5ErkJggg==";
-var TRAY_ICON_ALERT_DATA_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAmUlEQVR4nGNgIAG8EBEJeyEi8h9E41Uol3KHUy7lTohcyp1qKA6BakTBuDSDNHyRS7nzH4aTPGdiaMbqErmUO4uQNcIwDs2oroDajKGZKBdA/fwFlwG4XIFsewg+zeguAdEgPUQ5Hw+upqoBRHkBDaN4gWAgomGQWk5sCYh05xOTkNDwIkL5ACMpIzkbu81YDMHITBh+phYAACsjdcXNnezoAAAAAElFTkSuQmCC";
+var trayIconDir = import_electron.app.isPackaged ? import_path.default.join(process.resourcesPath, "build") : import_path.default.join(__dirname, "..", "build");
+var defaultIcon = null;
+var alertIcon = null;
+function loadTrayIcons() {
+  const defaultPath = import_path.default.join(trayIconDir, "tray-default.png");
+  const alertPath = import_path.default.join(trayIconDir, "tray-alert.png");
+  if (!import_fs.default.existsSync(defaultPath)) {
+    console.warn(`[tray] missing ${defaultPath} \u2014 run electron/prebuild-tray-icons.js`);
+  }
+  defaultIcon = import_electron.nativeImage.createFromPath(defaultPath);
+  alertIcon = import_electron.nativeImage.createFromPath(alertPath);
+  if (defaultIcon.isEmpty()) {
+    console.warn(`[tray] tray-default.png loaded as empty image`);
+  }
+}
 function getConfiguredFeed() {
   const updateUrl = store.get("updateUrl");
   if (!updateUrl) return null;
@@ -74,9 +88,7 @@ var flashTimer = null;
 var flashPhase = false;
 function startTrayFlash() {
   if (flashTimer) return;
-  if (!tray) return;
-  const defaultIcon = import_electron.nativeImage.createFromDataURL(TRAY_ICON_DATA_URL);
-  const alertIcon = import_electron.nativeImage.createFromDataURL(TRAY_ICON_ALERT_DATA_URL);
+  if (!tray || !defaultIcon || !alertIcon) return;
   flashPhase = false;
   flashTimer = setInterval(() => {
     flashPhase = !flashPhase;
@@ -89,7 +101,7 @@ function stopTrayFlash() {
     flashTimer = null;
   }
   flashPhase = false;
-  if (tray) tray.setImage(import_electron.nativeImage.createFromDataURL(TRAY_ICON_DATA_URL));
+  if (tray && defaultIcon) tray.setImage(defaultIcon);
 }
 function createWindow() {
   mainWindow = new import_electron.BrowserWindow({
@@ -162,8 +174,8 @@ function setupWindowControls() {
   });
 }
 function createTray() {
-  const icon = import_electron.nativeImage.createFromDataURL(TRAY_ICON_DATA_URL);
-  tray = new import_electron.Tray(icon);
+  loadTrayIcons();
+  tray = new import_electron.Tray(defaultIcon);
   const contextMenu = import_electron.Menu.buildFromTemplate([
     {
       label: "\u6253\u5F00\u5B9E\u65F6\u72B6\u6001",
@@ -220,7 +232,7 @@ function createTray() {
       }
     }
   ]);
-  tray.setToolTip("DeerClaw \u5BA2\u6237\u7AEF");
+  tray.setToolTip("PeerOP \u5BA2\u6237\u7AEF");
   tray.setContextMenu(contextMenu);
   tray.on("click", () => {
     if (!mainWindow) return;

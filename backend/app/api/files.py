@@ -218,7 +218,19 @@ async def list_files(
     path_exists = await storage.exists(storage_key)
     path_is_dir = await storage.is_dir(storage_key)
     if not path_exists and not path_is_dir:
-        if not (
+        if normalized_path in ("workspace", "memory", "skills"):
+            # Backfill legacy agents whose workspace pre-dates the template
+            # seed step so the file browser shows an empty directory
+            # placeholder instead of a 404. .gitkeep is the conventional
+            # way to ensure a directory survives in git-based storage
+            # backends; list_files filters it out below so the UI still
+            # shows an empty directory.
+            await storage.write_text(
+                f"{agent_id}/{normalized_path}/.gitkeep", "", encoding="utf-8"
+            )
+            path_exists = True
+            path_is_dir = True
+        elif not (
             normalized_path == ""
             or (is_enterprise and normalized_path == "enterprise_info")
         ):
@@ -262,6 +274,13 @@ async def list_files(
     return items
 
 
+# Files the front-end requests without a user gesture (mount-time
+# prefetch / system file previews). Returning an empty payload instead
+# of 404 keeps the browser DevTools network panel clean for legacy
+# agents whose workspace pre-dates the template seed step.
+SYSTEM_OPTIONAL_FILES = frozenset({"soul.md", "HEARTBEAT.md", "task_history.md"})
+
+
 @router.get("/content", response_model=FileContent)
 async def read_file(
     agent_id: uuid.UUID,
@@ -279,6 +298,8 @@ async def read_file(
     storage = get_storage_backend()
     key, _ = _visible_storage_key(agent_id, path, current_user.tenant_id)
     if not await storage.exists(key) or not await storage.is_file(key):
+        if path in SYSTEM_OPTIONAL_FILES:
+            return FileContent(path=path, content="", version_token=None)
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found")
     version = await storage.get_version(key)
 

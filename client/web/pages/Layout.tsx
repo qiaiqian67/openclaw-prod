@@ -463,14 +463,16 @@ export default function Layout() {
     const tenantMenuPortalRef = useRef<HTMLDivElement>(null);
     const [tenantMenuPos, setTenantMenuPos] = useState({ top: 0, left: 0, maxHeight: 520 });
 
-    // Notification polling
+    // Notification polling — 5s keeps tray flash latency low for both
+    // system notifications (autonomy/plaza) and agent chat replies
+    // (which now write a Notification row in _save_assistant_reply).
     const { data: unreadCount = 0 } = useQuery({
         queryKey: ['notifications-unread'],
         queryFn: async () => {
             const res = await fetchJson<{ unread_count: number }>('/notifications/unread-count');
             return (res as any)?.unread_count || 0;
         },
-        refetchInterval: 30000,
+        refetchInterval: 5000,
         enabled: !!user,
     });
 
@@ -486,6 +488,22 @@ export default function Layout() {
             window.electronAPI.tray.stopFlash();
         }
     }, [unreadCount]);
+
+    // When the window regains focus, force an immediate unread-count refetch
+    // so the tray icon stops flashing without waiting up to 5s for the next
+    // poll tick. The existing flash effect above (driven by [unreadCount])
+    // will then call tray.stopFlash() once the new value lands.
+    useEffect(() => {
+        if (!user) return;
+        const refetch = () => queryClient.invalidateQueries({ queryKey: ['notifications-unread'] });
+        const onVisibility = () => { if (!document.hidden) refetch(); };
+        window.addEventListener('focus', refetch);
+        document.addEventListener('visibilitychange', onVisibility);
+        return () => {
+            window.removeEventListener('focus', refetch);
+            document.removeEventListener('visibilitychange', onVisibility);
+        };
+    }, [user, queryClient]);
 
     // Reset main-content scroll on route change so each navigation lands at the top.
     // Chat / agent-settings pages have their own internal scroll containers

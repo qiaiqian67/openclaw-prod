@@ -27,6 +27,7 @@ from app.services.activity_logger import log_activity
 from app.services.agentbay_live import detect_agentbay_env, get_browser_snapshot, get_desktop_screenshot
 from app.services.chat_session_service import ensure_primary_platform_session
 from app.services.llm import call_llm_with_failover
+from app.services.notification_service import send_notification
 from app.services.onboarding import is_onboarded, mark_onboarding_phase, resolve_onboarding_prompt
 from app.services.quota_guard import (
     AgentExpired,
@@ -1111,7 +1112,14 @@ class WebSocketChatHandler:
         return assistant_response
 
     async def _save_assistant_reply(self, assistant_response: str, thinking_content: list[str]):
-        """Saves assistant reply to DB."""
+        """Saves assistant reply to DB.
+
+        If the user is not currently viewing this session, also drops a
+        Notification(type="agent_message") in the same transaction so the
+        desktop client's tray icon can flash (it polls notifications-unread
+        every 5s). When the user IS viewing the session, maybe_mark returns
+        True and the message is auto-marked as read — no notification needed.
+        """
         async with async_session() as db:
             assistant_msg = ChatMessage(
                 agent_id=self.agent_id,
@@ -1122,11 +1130,23 @@ class WebSocketChatHandler:
                 thinking="".join(thinking_content) if thinking_content else None,
             )
             db.add(assistant_msg)
-            await maybe_mark_session_read_for_active_viewer(
+            marked = await maybe_mark_session_read_for_active_viewer(
                 db,
                 agent_id=self.agent_id,
                 session_id=self.conv_id,
                 user_id=self.user.id,
             )
+            if not marked:
+                preview = (assistant_response or "").strip().replace("\n", " ")[:120]
+                await send_notification(
+                    db,
+                    user_id=self.user.id,
+                    type="agent_message",
+                    title=self.agent_name,
+                    body=preview,
+                    link=f"/agents/{self.agent_id}?session={self.conv_id}",
+                    ref_id=uuid.UUID(self.conv_id) if self.conv_id else None,
+                    sender_name=self.agent_name,
+                )
             await db.commit()
         logger.info("[WS] Assistant message saved")

@@ -1,12 +1,13 @@
 {
-  "name": "deerclaw-client",
-  "description": "DeerClaw Desktop Client",
+  "name": "peerop-client",
+  "description": "PeerOP Desktop Client",
   "private": true,
   "version": "0.1.0",
   "main": "electron/main.js",
-  "author": "DeerClaw",
+  "author": "PeerOP",
   "scripts": {
     "build": "vite build",
+    "prebuild:electron": "node electron/prebuild-tray-icons.js",
     "build:electron": "esbuild electron/main.ts --bundle --platform=node --outfile=electron/main.js --external:electron --external:electron-updater --external:electron-store && esbuild electron/preload.ts --bundle --platform=node --outfile=electron/preload.js --external:electron",
     "electron:dev": "npm run build && npm run build:electron && electron .",
     "electron:build": "npm run build && npm run build:electron && electron-builder"

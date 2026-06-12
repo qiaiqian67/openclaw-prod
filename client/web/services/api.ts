@@ -356,21 +356,16 @@ export const fileApi = {
     },
 
     /**
-     * Ensure a file exists. If GET returns 404, PUT the supplied content
-     * (default: empty) so subsequent reads succeed. Use once per file
-     * (e.g. on MindTab mount) to stop 404 noise for legacy agents whose
-     * workspaces were created before the template-seed step.
+     * Ensure a file exists by PUTting the supplied content (default: empty).
+     * PUT creates the file when missing, so no read probe is needed and
+     * legacy agents whose workspace pre-dates the template seed step never
+     * log a 404 to the console. Use once per file (e.g. on MindTab mount).
      */
     ensureExists: async (agentId: string, path: string, content: string = ''): Promise<void> => {
         try {
-            await fileApi.read(agentId, path);
-        } catch (e: any) {
-            if (e?.status !== 404) throw e;
-            try {
-                await fileApi.write(agentId, path, content);
-            } catch {
-                // best-effort: a 403 here is fine, the read call site will surface it
-            }
+            await fileApi.write(agentId, path, content);
+        } catch {
+            // best-effort: a 403 here is fine, the read call site will surface it
         }
     },
 

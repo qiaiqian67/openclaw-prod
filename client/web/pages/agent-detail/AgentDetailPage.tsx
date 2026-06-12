@@ -2108,7 +2108,7 @@ export default function AgentDetailPage() {
 
     const { data: soulContent } = useQuery({
         queryKey: ['file', id, 'soul.md'],
-        queryFn: () => fileApi.read(id!, 'soul.md'),
+        queryFn: () => fileApi.readOrEmpty(id!, 'soul.md'),
         enabled: !!id && activeTab === 'mind',
     });
 

@@ -310,6 +310,36 @@ export const fileApi = {
     read: (agentId: string, path: string) =>
         request<{ path: string; content: string }>(`/agents/${agentId}/files/content?path=${encodeURIComponent(path)}`),
 
+    /**
+     * Read a file; if it does not exist on the server (HTTP 404), return
+     * `{ content: '' }` instead of throwing. Use this for system-managed
+     * files (soul.md, HEARTBEAT.md, memory/*) where empty content is a
+     * valid initial state. The browser will still log the 404 in the
+     * network panel, but callers don't have to handle the throw.
+     */
+    readOrEmpty: async (agentId: string, path: string): Promise<{ path: string; content: string }> => {
+        try {
+            return await fileApi.read(agentId, path);
+        } catch (e: any) {
+            if (e?.status === 404) return { path, content: '' };
+            throw e;
+        }
+    },
+
+    /**
+     * Ensure a file exists by PUTting the supplied content (default: empty).
+     * PUT creates the file when missing, so no read probe is needed and
+     * legacy agents whose workspace pre-dates the template seed step never
+     * log a 404 to the console. Use once per file (e.g. on MindTab mount).
+     */
+    ensureExists: async (agentId: string, path: string, content: string = ''): Promise<void> => {
+        try {
+            await fileApi.write(agentId, path, content);
+        } catch {
+            // best-effort: a 403 here is fine, the read call site will surface it
+        }
+    },
+
     write: (agentId: string, path: string, content: string) =>
         request(`/agents/${agentId}/files/content?path=${encodeURIComponent(path)}`, {
             method: 'PUT',

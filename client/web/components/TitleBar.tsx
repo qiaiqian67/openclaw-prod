@@ -32,9 +32,9 @@ export default function TitleBar() {
       {/* Brand section on the left. `no-drag` so it doesn't compete with
          the window-drag region in the middle; users can still select the
          text or right-click for the system menu. */}
-      <div className="titlebar-brand" title={t('app.desktopBrandTitle', 'DeerClaw Desktop')}>
+      <div className="titlebar-brand" title={t('app.desktopBrandTitle', 'PeerOP')}>
         <img src="./logo.svg" alt="" className="titlebar-brand-logo" />
-        <span className="titlebar-brand-name">DeerClaw</span>
+        <span className="titlebar-brand-name">PeerOP</span>
         {version && <span className="titlebar-brand-version">v{version}</span>}
       </div>
       <div className="titlebar-drag-region" />
