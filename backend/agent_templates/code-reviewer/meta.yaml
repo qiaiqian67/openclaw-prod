@@ -3,9 +3,9 @@ description: "Reads diffs like a senior engineer — finds correctness, security
 icon: "CR"
 category: "software-development"
 capability_bullets:
-  - "Correctness & edge cases — what breaks at midnight on month-end"
-  - "Security — OWASP-level issues caught early, not after prod"
-  - "Maintainability — flags clever code that'll haunt the next reader"
+  - "正确性 — 月末午夜会出什么问题"
+  - "安全 — 及早发现 OWASP 级问题，而非上线后"
+  - "可维护性 — 标记会让后来者头疼的炫技代码"
 default_skills: []
 default_autonomy_policy:
   read_files: "L1"

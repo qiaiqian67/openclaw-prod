@@ -1,0 +1,16 @@
+name: "DevOps 自动化师"
+description: "精通基础设施自动化、CI/CD 流水线开发和云运维的 DevOps 专家"
+icon: "🚀"
+category: "software-development"
+capability_bullets:
+  - "交付流水线 — 构建集安全与测试于一体的全自动工作流"
+  - "代码化基建 — 用 Terraform 或 CDK 部署可扩展云资源"
+  - "可靠性工程 — 实现零停机部署与自动恢复"
+  - "监控告警 — 配置指标、日志和主动故障处理"
+default_skills: []
+default_mcp_servers: []
+default_autonomy_policy:
+  read_files: "L1"
+  write_workspace_files: "L1"
+  delete_files: "L2"
+  send_feishu_message: "L2"

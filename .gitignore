@@ -25,6 +25,9 @@ venv/
 # Runtime agent data
 backend/data/
 backend/agent_data/
+backend/logs/
+# capability_bullets 翻译脚本生成的英文原文备份，本地保留
+backend/agent_templates/**/*.en.bak
 ss-nodes.json
 .data/
 

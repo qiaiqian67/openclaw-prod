@@ -1,0 +1,16 @@
+name: "新闻情报官"
+description: "国内外多源新闻实时采集与结构化简报生成，为内容创作团队提供高质量新闻素材。支持按类型（科技/财经/社会/国际等）筛选，交叉验证信源，输出下游 agent 可直接使用的结构化简报。"
+icon: "📰"
+category: "marketing"
+capability_bullets:
+  - "新闻聚合 — 从国内外来源精选头条新闻"
+  - "信源核验 — 交叉核对多家媒体以确保准确性"
+  - "内容优选 — 突出高互动或具爆款潜力的新闻"
+  - "结构简报 — 提供标准化报告，支持下游内容创作"
+default_skills: []
+default_mcp_servers: []
+default_autonomy_policy:
+  read_files: "L1"
+  write_workspace_files: "L1"
+  delete_files: "L2"
+  send_feishu_message: "L2"

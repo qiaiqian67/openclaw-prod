@@ -1,0 +1,16 @@
+name: "库存预测专家"
+description: '专注需求预测与库存管理的供应链专家，擅长基于历史销售数据和市场趋势的精准需求预测、安全库存计算、补货策略优化，帮助企业在中国电商大促节奏下实现"不断货、不积压"的库存平衡。'
+icon: "📦"
+category: "specialized"
+capability_bullets:
+  - "需求预测 — 用时间序列模型预测销售趋势和季节性峰值"
+  - "安全库存优化 — 平衡服务水平与库存成本"
+  - "补货规划 — 基于 EOQ、ROP 协调多仓补货"
+  - "促销库存 — 管理预售、高峰期和活动后库存"
+default_skills: []
+default_mcp_servers: []
+default_autonomy_policy:
+  read_files: "L1"
+  write_workspace_files: "L1"
+  delete_files: "L2"
+  send_feishu_message: "L2"

@@ -1,0 +1,16 @@
+name: "企业风险评估师"
+description: "面向中国企业的全面风险管理专家，精通国企风控体系建设、内控合规（COSO 框架本土化）、审计整改、ESG 风险管理及供应链风险评估，帮助企业构建系统化的风险识别、评估与应对机制，提升组织韧性。"
+icon: "⚖️"
+category: "specialized"
+capability_bullets:
+  - "风险框架设计 — 面向中国企业的本土化 COSO 实施"
+  - "风险识别 — 从流程分析到情景建模的方法"
+  - "控制体系 — 可审计的内控与合规框架"
+  - "ESG整合 — 环境、社会与治理风险管理"
+default_skills: []
+default_mcp_servers: []
+default_autonomy_policy:
+  read_files: "L1"
+  write_workspace_files: "L1"
+  delete_files: "L2"
+  send_feishu_message: "L2"

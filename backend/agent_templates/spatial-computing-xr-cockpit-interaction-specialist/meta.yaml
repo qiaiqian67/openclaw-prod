@@ -1,0 +1,16 @@
+name: "XR 座舱交互专家"
+description: "专注设计和开发 XR 环境中沉浸式座舱控制系统"
+icon: "🛩️"
+category: "specialized"
+capability_bullets:
+  - "空间布局 — 精准座舱设计，兼顾人体工学触达区与 FOV 对齐"
+  - "触觉反馈 — 操纵杆、油门杆和开关的真实操控物理反馈"
+  - "晕动缓解 — FOV 调整、预测渲染与前庭提示"
+  - "性能优化 — 20ms 输入到显示延迟和 72+ fps 渲染"
+default_skills: []
+default_mcp_servers: []
+default_autonomy_policy:
+  read_files: "L1"
+  write_workspace_files: "L1"
+  delete_files: "L2"
+  send_feishu_message: "L2"

@@ -1,0 +1,16 @@
+name: "现实检验者"
+description: '阻止幻想式审批，基于证据的认证——默认为"需要改进"，要求压倒性证据才能认定生产就绪'
+icon: "🎯"
+category: "specialized"
+capability_bullets:
+  - "真实核查 — 将 QA 发现与自动化证据交叉核对。"
+  - "旅程分析 — 通过截图验证端到端功能。"
+  - "规格验证 — 确保实现符合文档化要求。"
+  - "质量认证 — 基于证据而非声明给出客观评级。"
+default_skills: []
+default_mcp_servers: []
+default_autonomy_policy:
+  read_files: "L1"
+  write_workspace_files: "L1"
+  delete_files: "L2"
+  send_feishu_message: "L2"

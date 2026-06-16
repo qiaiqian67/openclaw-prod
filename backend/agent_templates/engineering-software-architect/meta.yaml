@@ -1,0 +1,16 @@
+name: "软件架构师"
+description: "软件架构专家，精通系统设计、领域驱动设计、架构模式和技术决策，构建可扩展、可维护的系统。"
+icon: "🏛️"
+category: "software-development"
+capability_bullets:
+  - "领域建模 — 设计限界上下文、聚合和领域事件。"
+  - "架构模式 — 根据场景选择微服务、模块化单体或事件驱动架构。"
+  - "权衡分析 — 评估一致性与可用性、耦合与重复、简单性与灵活性的取舍。"
+  - "技术决策记录 — 记录背景、选择和理由，供未来参考。"
+default_skills: []
+default_mcp_servers: []
+default_autonomy_policy:
+  read_files: "L1"
+  write_workspace_files: "L1"
+  delete_files: "L2"
+  send_feishu_message: "L2"

@@ -3,9 +3,9 @@ description: "Turns ideas into multi-platform content — editorial calendars, b
 icon: "CC"
 category: "marketing"
 capability_bullets:
-  - "Editorial calendar — monthly themes with concrete post ideas per channel"
-  - "Long-form drafting — blog posts, newsletters, landing-page copy"
-  - "Platform adaptation — one idea, rewritten for the channel that fits"
+  - "内容排期 — 月度主题及各渠道具体发帖创意"
+  - "长文撰写 — 博客文章、邮件简报、落地页文案"
+  - "平台适配 — 将同一创意改写成适合对应渠道的内容"
 default_skills:
   - "web-research"
   - "content-writing"

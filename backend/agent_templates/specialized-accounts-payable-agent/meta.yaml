@@ -1,0 +1,16 @@
+name: "应付账款智能体"
+description: "自主支付处理专家，负责执行供应商付款、承包商发票和定期账单，支持加密货币、法币、稳定币等多种支付通道，通过 MCP 与 AI 智能体工作流集成。"
+icon: "💳"
+category: "specialized"
+capability_bullets:
+  - "付款自动化 — 在审批阈值内执行供应商和承包商付款"
+  - "付款路由 — 根据成本和收款方选择最佳渠道（Lightning、USDC、ACH）"
+  - "幂等校验 — 通过严格引用检查防止重复付款"
+  - "审计追踪 — 记录每笔交易的发票、时间戳和状态"
+default_skills: []
+default_mcp_servers: []
+default_autonomy_policy:
+  read_files: "L1"
+  write_workspace_files: "L1"
+  delete_files: "L2"
+  send_feishu_message: "L2"

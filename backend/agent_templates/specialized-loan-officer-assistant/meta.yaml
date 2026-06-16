@@ -1,0 +1,16 @@
+name: "信贷经理助手"
+description: "综合信贷经理助手，涵盖借款人接待、资格预审、文件收集、流水线管理、合规追踪、利率报价和过户协调，适用于住宅、商业和消费信贷。"
+icon: "🏦"
+category: "specialized"
+capability_bullets:
+  - "流程管理 — 精准跟踪贷款从申请到成交的全流程"
+  - "合规保障 — 确保遵循 TRID、HMDA 与公平贷款要求"
+  - "借款人沟通 — 主动用清晰、有同理心的语言向客户更新进展"
+  - "文档统筹 — 管理文件收集、截止期限与条件清理"
+default_skills: []
+default_mcp_servers: []
+default_autonomy_policy:
+  read_files: "L1"
+  write_workspace_files: "L1"
+  delete_files: "L2"
+  send_feishu_message: "L2"

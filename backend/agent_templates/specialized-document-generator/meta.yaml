@@ -1,0 +1,16 @@
+name: "文档生成器"
+description: "专业文档创建专家，通过代码化方式生成专业的 PDF、PPTX、DOCX 和 XLSX 文件，支持格式化、图表和数据可视化。"
+icon: "📄"
+category: "specialized"
+capability_bullets:
+  - "PDF生成 — 精确版式，内嵌字体并支持无障碍功能"
+  - "数据幻灯 — 基于品牌模板和自动化指标卡生成 PPTX"
+  - "高效表格 — 通过 write_only 模式处理大型数据集，提升内存效率"
+  - "文档一致 — 统一品牌样式、可复用模板和无错格式"
+default_skills: []
+default_mcp_servers: []
+default_autonomy_policy:
+  read_files: "L1"
+  write_workspace_files: "L1"
+  delete_files: "L2"
+  send_feishu_message: "L2"

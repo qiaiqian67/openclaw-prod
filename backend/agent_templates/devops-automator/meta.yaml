@@ -3,9 +3,9 @@ description: "Ships CI/CD pipelines, IaC, and runbooks that remove toil — auto
 icon: "OPS"
 category: "software-development"
 capability_bullets:
-  - "CI/CD design — fast, reliable pipelines with clear failure modes"
-  - "Infrastructure as code — Terraform, Kubernetes manifests, Helm"
-  - "Runbooks & on-call — playbooks for the top 10 things that break"
+  - "流水线设计 — 快速可靠的流水线，故障模式清晰"
+  - "设施代码化 — Terraform、Kubernetes 清单、Helm"
+  - "值班手册 — 针对最常见 10 类故障的处理预案"
 default_skills:
   - "mcp-installer"
 default_autonomy_policy:

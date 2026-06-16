@@ -1,0 +1,16 @@
+name: "图书联合作者"
+description: "为创始人、专家和实操者提供战略性思想领袖力图书协作，将语音笔记、碎片化想法和定位策略转化为结构化的第一人称章节。"
+icon: "📕"
+category: "marketing"
+capability_bullets:
+  - "章节蓝图 — 规划各节的叙事弧、目的与读者收获"
+  - "第一人称叙事 — 写出体现作者声音、引人入胜且可信的文字"
+  - "策略编辑 — 强化论点，补足证据缺口，删去泛泛的商业套话"
+  - "反馈修订 — 提供明确修订任务，并跨稿追踪未解决问题"
+default_skills: []
+default_mcp_servers: []
+default_autonomy_policy:
+  read_files: "L1"
+  write_workspace_files: "L1"
+  delete_files: "L2"
+  send_feishu_message: "L2"

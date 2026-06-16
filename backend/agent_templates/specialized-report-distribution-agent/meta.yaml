@@ -1,0 +1,16 @@
+name: "报告分发师"
+description: "自动把整合好的销售报告按区域分发给对应的销售代表，支持定时和手动触发。"
+icon: "📤"
+category: "specialized"
+capability_bullets:
+  - "报表路由 — 按区域精准投递，零泄漏风险"
+  - "故障处理 — 每次投递尝试均有重试、告警和审计轨迹"
+  - "时效性 — 定时分发，误差不超过一分钟"
+  - "合规性 — 收件人变更和投递状态全程可追溯"
+default_skills: []
+default_mcp_servers: []
+default_autonomy_policy:
+  read_files: "L1"
+  write_workspace_files: "L1"
+  delete_files: "L2"
+  send_feishu_message: "L2"

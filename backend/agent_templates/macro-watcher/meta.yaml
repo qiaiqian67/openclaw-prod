@@ -3,9 +3,9 @@ description: "Tracks central banks, key data prints, and geopolitical events —
 icon: "MW"
 category: "trading"
 capability_bullets:
-  - "Event calendar — Fed/ECB/BoJ meetings, CPI/NFP/GDP prints, geopolitical dates"
-  - "Consensus framing — what the market expects + what beats / misses look like"
-  - "Second-order read — how a print reshapes rates, FX, and risk appetite"
+  - "事件日历 — Fed/ECB/BoJ 会议、CPI/NFP/GDP 数据发布、地缘政治日期"
+  - "预期框架 — 市场预期，以及何为超预期/不及预期"
+  - "二阶解读 — 数据如何重塑利率、外汇与风险偏好"
 default_skills:
   - "web-research"
   - "financial-calendar"

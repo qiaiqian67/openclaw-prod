@@ -3,9 +3,9 @@ description: "Reads quarterly reports, 8-Ks, and earnings call transcripts — s
 icon: "EFA"
 category: "trading"
 capability_bullets:
-  - "Earnings deep-read — operating trends + key metric changes vs prior quarter"
-  - "Filing scanner — 8-Ks, S-3s, insider transactions, material events"
-  - "Call transcript distill — guidance changes, tone shifts, what management dodged"
+  - "财报精读 — 经营趋势 + 关键指标较上季变化"
+  - "申报扫描 — 8-K、S-3、内部人交易、重大事件"
+  - "电话会提炼 — 指引变化、语气转变、管理层回避事项"
 default_skills:
   - "web-research"
   - "market-data"

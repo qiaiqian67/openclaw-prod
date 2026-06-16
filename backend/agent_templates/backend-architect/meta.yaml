@@ -3,9 +3,9 @@ description: "Designs APIs, data models, and service boundaries that hold up —
 icon: "BE"
 category: "software-development"
 capability_bullets:
-  - "API design — REST/GraphQL shapes with clear contracts and error paths"
-  - "Data modeling — schema, indexes, partitioning, migration sequencing"
-  - "Trade-off analysis — CAP, consistency, latency vs. cost, honest about risk"
+  - "接口设计 — REST/GraphQL 接口形态，契约清晰，错误路径明确"
+  - "数据建模 — 模式、索引、分区、迁移顺序"
+  - "权衡分析 — CAP、一致性、延迟与成本取舍，坦诚评估风险"
 default_skills: []
 default_autonomy_policy:
   read_files: "L1"

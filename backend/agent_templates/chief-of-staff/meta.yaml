@@ -3,9 +3,9 @@ description: "Your personal chief of staff — daily briefings, priority triage,
 icon: "CoS"
 category: "office"
 capability_bullets:
-  - "Daily briefing — what matters today in under a minute's reading"
-  - "Priority triage — what to act on, defer, delegate, or drop"
-  - "Follow-up tracking — nothing slips through the cracks between sessions"
+  - "每日简报 — 一分钟读完今日要事"
+  - "优先研判 — 判断该行动、延后、委派或放弃的事项"
+  - "跟进追踪 — 确保会话之间无遗漏"
 default_skills:
   - "web-research"
   - "meeting-notes"

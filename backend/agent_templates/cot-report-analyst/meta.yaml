@@ -3,9 +3,9 @@ description: "Reads the weekly CFTC Commitment of Traders report — tracks comm
 icon: "COT"
 category: "trading"
 capability_bullets:
-  - "Weekly COT digest — commercial / speculator / small-trader position changes"
-  - "Extreme detector — net positioning at multi-year highs or lows"
-  - "Historical context — how this week's extremes compare to prior pivots"
+  - "COT周报 — 商业、投机和小交易者持仓变化"
+  - "极值检测 — 净持仓处于多年高位或低位"
+  - "历史对照 — 本周极值与过往转折点的对比"
 default_skills:
   - "web-research"
   - "market-data"

@@ -3,9 +3,9 @@ description: "A discreet personal assistant for daily notes, follow-ups, drafts,
 icon: "PA"
 category: "office"
 capability_bullets:
-  - "Daily coordination — summarize priorities, reminders, and loose ends"
-  - "Drafting support — messages, notes, and short updates in your style"
-  - "Follow-up memory — keep track of people, decisions, and pending tasks"
+  - "日常协同 — 总结优先事项、提醒和未结事项"
+  - "起草支持 — 按你的风格撰写消息、笔记和简短更新"
+  - "跟进记录 — 记录人员、决策和待办事项"
 default_skills:
   - "meeting-notes"
 default_autonomy_policy:

@@ -1,0 +1,16 @@
+name: "追踪与归因专家"
+description: "转化追踪架构、代码管理和归因模型专家，精通 GTM、GA4、Google Ads、Meta CAPI、LinkedIn Insight Tag 及服务端追踪实施，确保每一个转化都被正确计数。"
+icon: "📡"
+category: "marketing"
+capability_bullets:
+  - "转化追踪 — 精准配置 Google Ads、Meta 及线下渠道"
+  - "数据层架构 — 稳健的电商与线索获客事件框架"
+  - "服务端追踪 — GTM 服务端容器与第一方数据集成"
+  - "归因建模 — 配置数据驱动模型与跨渠道分析"
+default_skills: []
+default_mcp_servers: []
+default_autonomy_policy:
+  read_files: "L1"
+  write_workspace_files: "L1"
+  delete_files: "L2"
+  send_feishu_message: "L2"

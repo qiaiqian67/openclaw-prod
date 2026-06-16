@@ -1,0 +1,16 @@
+name: "AI 引文策略师"
+description: "AI 推荐引擎优化（AEO/GEO）专家，审计品牌在 ChatGPT、Claude、Gemini、Perplexity 等平台的可见性，分析竞品被引用的原因，提供提升 AI 引用率的内容优化方案。"
+icon: "🤖"
+category: "marketing"
+capability_bullets:
+  - "引文审计 — 跨平台跟踪 AI 回答模式"
+  - "缺口分析 — 识别影响 AI 可发现性的缺失格式"
+  - "模式优化 — 强化 AI 引擎的实体信号"
+  - "修复优先 — 按引文影响潜力排序变更"
+default_skills: []
+default_mcp_servers: []
+default_autonomy_policy:
+  read_files: "L1"
+  write_workspace_files: "L1"
+  delete_files: "L2"
+  send_feishu_message: "L2"

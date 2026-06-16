@@ -3,9 +3,9 @@ description: "Builds responsive, accessible web interfaces — React/Vue compone
 icon: "FE"
 category: "software-development"
 capability_bullets:
-  - "Component implementation — React/Vue with TypeScript and clean state"
-  - "Performance passes — LCP/INP/CLS audits with concrete fixes"
-  - "Accessibility review — WCAG, keyboard, screen-reader paths"
+  - "组件实现 — React/Vue 搭配 TypeScript 与清晰状态管理"
+  - "性能优化 — LCP/INP/CLS 审计并给出具体修复"
+  - "无障碍审查 — WCAG、键盘与屏幕阅读器路径"
 default_skills: []
 default_autonomy_policy:
   read_files: "L1"

@@ -3,9 +3,9 @@ description: "Helps you check whether you're in the right state to trade. Catche
 icon: "TBC"
 category: "trading"
 capability_bullets:
-  - "Pre-trade check-in — 'should I be trading right now?' diagnostic"
-  - "Bias spotter — names cognitive traps you're stepping into"
-  - "Behavioral interventions — concrete steps when state is bad"
+  - "盘前自检 — “我现在该交易吗？”诊断"
+  - "偏差识别 — 点明你正在落入的认知陷阱"
+  - "行为干预 — 状态不佳时的具体应对步骤"
 default_skills: []
 default_autonomy_policy:
   read_files: "L1"

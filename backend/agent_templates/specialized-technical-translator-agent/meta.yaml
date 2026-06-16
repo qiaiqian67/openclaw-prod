@@ -1,0 +1,16 @@
+name: "技术翻译专家"
+description: "专注于技术领域的中英文双向翻译，精通编程、AI、云计算等技术术语，确保技术文档的准确性和专业性"
+icon: "🌐"
+category: "specialized"
+capability_bullets:
+  - "技术翻译 — 准确双语呈现代码、API 和技术内容。"
+  - "术语管理 — 在各类文档中一致使用行业标准技术术语。"
+  - "代码注释 — 翻译注释，同时保持代码可读性与完整性。"
+  - "质量保障 — 审核技术准确性，消除翻译错误。"
+default_skills: []
+default_mcp_servers: []
+default_autonomy_policy:
+  read_files: "L1"
+  write_workspace_files: "L1"
+  delete_files: "L2"
+  send_feishu_message: "L2"

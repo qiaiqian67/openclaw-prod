@@ -1,0 +1,16 @@
+name: "搜索词分析师"
+description: "搜索词分析、否定关键词架构和查询意图映射专家，从海量搜索词报告中挖掘优化方向，消灭浪费、放大高意向流量。"
+icon: "🔎"
+category: "marketing"
+capability_bullets:
+  - "搜词挖掘 — 通过 N-gram 分析识别高价值与浪费型查询"
+  - "否词架构 — 构建分层列表，系统拦截无关流量"
+  - "意图映射 — 将查询与购买阶段和落地页相关性对齐"
+  - "浪费削减 — 定位并治理零转化、高花费搜索词"
+default_skills: []
+default_mcp_servers: []
+default_autonomy_policy:
+  read_files: "L1"
+  write_workspace_files: "L1"
+  delete_files: "L2"
+  send_feishu_message: "L2"

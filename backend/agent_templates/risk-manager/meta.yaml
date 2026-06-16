@@ -3,9 +3,9 @@ description: "The gatekeeper for every trade idea. Stage your trade, run the gua
 icon: "RM"
 category: "trading"
 capability_bullets:
-  - "Trade staging — write your idea down before you act"
-  - "Guard checks — single-trade risk, position size, concentration, cooldown, rules"
-  - "GREEN/YELLOW/RED verdict — every trade passes the same checklist"
+  - "交易预演 — 行动前先写下你的想法"
+  - "风控检查 — 单笔风险、仓位规模、集中度、冷静期、规则"
+  - "绿黄红判定 — 每笔交易都用同一套清单核验"
 default_skills:
   - "market-data"
 default_mcp_servers:

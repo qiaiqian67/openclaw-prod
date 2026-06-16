@@ -225,7 +225,40 @@ const FEATURED_TEMPLATE_NAMES = new Set<string>([
     'Market Intel Aggregator',
 ]);
 
-type TabId = 'popular' | 'software-development' | 'marketing' | 'office' | 'trading';
+type TabId =
+    | 'popular'
+    | 'software-development'
+    | 'marketing'
+    | 'office'
+    | 'trading'
+    | 'design'
+    | 'data-analysis'
+    | 'finance'
+    | 'product'
+    | 'sales'
+    | 'support'
+    | 'specialized';
+
+// Single source of truth for Plaza sub-tabs. The `id` MUST match the
+// `category` slug stored on AgentTemplate.meta.yaml (seed_agency_agents.py
+// uses the same 12 ids to map agency-agents-zh subdirectories).
+// `labelKey` is the i18n path; `fallback` is the literal string shown when
+// the active language has no entry for that key (handy for first render
+// before i18next has hydrated, and matches the i18n file's hardcoded text).
+const HIRE_TABS: Array<{ id: TabId; labelKey: string; fallback: string }> = [
+    { id: 'popular',              labelKey: 'plaza.hireTabPopular',      fallback: '热门推荐' },
+    { id: 'software-development', labelKey: 'plaza.hireTabSoftware',     fallback: '软件开发' },
+    { id: 'marketing',            labelKey: 'plaza.hireTabMarketing',    fallback: '营销' },
+    { id: 'office',               labelKey: 'plaza.hireTabOffice',       fallback: '办公通用' },
+    { id: 'trading',              labelKey: 'plaza.hireTabTrading',      fallback: '交易投资' },
+    { id: 'design',               labelKey: 'plaza.hireTabDesign',       fallback: '设计创作' },
+    { id: 'data-analysis',        labelKey: 'plaza.hireTabDataAnalysis', fallback: '数据分析' },
+    { id: 'finance',              labelKey: 'plaza.hireTabFinance',      fallback: '财务' },
+    { id: 'product',              labelKey: 'plaza.hireTabProduct',      fallback: '产品管理' },
+    { id: 'sales',                labelKey: 'plaza.hireTabSales',        fallback: '销售' },
+    { id: 'support',              labelKey: 'plaza.hireTabSupport',      fallback: '客服支持' },
+    { id: 'specialized',          labelKey: 'plaza.hireTabSpecialized',  fallback: '专业化' },
+];
 
 /* ────── Avatar component ────── */
 
@@ -1128,13 +1161,27 @@ function TalentMarketTab({
         staleTime: 5 * 60 * 1000,
     });
 
-    const subTabs: Array<{ id: TabId; label: string }> = [
-        { id: 'popular', label: t('plaza.hireTabPopular', isChinese ? '热门推荐' : 'Popular') },
-        { id: 'software-development', label: t('plaza.hireTabSoftware', isChinese ? '软件开发' : 'Software Development') },
-        { id: 'marketing', label: t('plaza.hireTabMarketing', isChinese ? '营销' : 'Marketing') },
-        { id: 'office', label: t('plaza.hireTabOffice', isChinese ? '办公通用' : 'Office') },
-        { id: 'trading', label: t('plaza.hireTabTrading', isChinese ? '交易投资' : 'Trading') },
-    ];
+    const subTabs: Array<{ id: TabId; label: string }> = HIRE_TABS.map(tab => ({
+        id: tab.id,
+        label: t(tab.labelKey, isChinese ? tab.fallback : (
+            // English fallback mirrors the i18n en.json values so first-paint
+            // is correct even before i18next has loaded the English bundle.
+            ({
+                'popular': 'Popular',
+                'software-development': 'Software Development',
+                'marketing': 'Marketing',
+                'office': 'Office',
+                'trading': 'Trading',
+                'design': 'Design',
+                'data-analysis': 'Data Analysis',
+                'finance': 'Finance',
+                'product': 'Product',
+                'sales': 'Sales',
+                'support': 'Customer Support',
+                'specialized': 'Specialized',
+            } as Record<TabId, string>)[tab.id]
+        )),
+    }));
 
     const builtins: Template[] = templates.filter((tpl: Template) => tpl.is_builtin);
     const trimmedQuery = searchQuery.trim().toLowerCase();

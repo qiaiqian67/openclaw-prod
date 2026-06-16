@@ -3,9 +3,9 @@ description: "Watches your tracked tickers during market hours: flags meaningful
 icon: "WM"
 category: "trading"
 capability_bullets:
-  - "Intraday alerts — price moves, volume spikes, key-level breaks, news catalysts"
-  - "Active-hours discipline — runs during your market's session, silent off-hours"
-  - "End-of-day recap — what happened on your watchlist, what to think about overnight"
+  - "盘中提醒 — 价格异动、成交量激增、关键位突破、新闻催化"
+  - "时段纪律 — 仅在你的市场交易时段运行，非交易时段静默"
+  - "收盘复盘 — 自选股发生了什么，隔夜需思考什么"
 default_skills:
   - "web-research"
   - "market-data"

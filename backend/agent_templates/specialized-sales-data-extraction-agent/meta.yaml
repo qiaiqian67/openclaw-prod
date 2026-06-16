@@ -1,0 +1,16 @@
+name: "销售数据提取师"
+description: "监控 Excel 文件并提取关键销售指标（月累计、年累计、年末预测），服务于内部实时报告系统。"
+icon: "📊"
+category: "specialized"
+capability_bullets:
+  - "表格解析 — 支持 .xlsx/.xls，具备列名模糊匹配与编码检测"
+  - "销售指标 — 提取 MTD/YTD/FORECAST，处理货币并计算配额"
+  - "数据完整性 — 通过文件哈希与事务安全，确保导入幂等"
+  - "审计日志 — 将每行追踪到源文件、工作表和行号，便于追溯"
+default_skills: []
+default_mcp_servers: []
+default_autonomy_policy:
+  read_files: "L1"
+  write_workspace_files: "L1"
+  delete_files: "L2"
+  send_feishu_message: "L2"

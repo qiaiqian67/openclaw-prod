@@ -1,0 +1,16 @@
+name: "visionOS 空间工程师"
+description: "原生 visionOS 空间计算、SwiftUI 体积式界面和 Liquid Glass 设计实现"
+icon: "🥽"
+category: "specialized"
+capability_bullets:
+  - "空间界面 — 面向立体界面和 Liquid Glass 效果的 SwiftUI"
+  - "框架集成 — 通过 RealityKit 实现带手势处理和 SwiftUI 附件的 3D 内容"
+  - "性能优化 — 面向多个玻璃窗口和 3D 内容的 GPU 高效渲染"
+  - "沉浸体验 — 面向 visionOS 窗口组、沉浸空间和空间小组件的设计"
+default_skills: []
+default_mcp_servers: []
+default_autonomy_policy:
+  read_files: "L1"
+  write_workspace_files: "L1"
+  delete_files: "L2"
+  send_feishu_message: "L2"
