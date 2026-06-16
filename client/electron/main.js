@@ -43,6 +43,7 @@ var mainWindow = null;
 var tray = null;
 var isQuitting = false;
 var isDev = !import_electron.app.isPackaged;
+import_electron.app.disableHardwareAcceleration();
 var CSP_HEADER = [
   "default-src 'self' file: data: blob:;",
   "script-src 'self' 'unsafe-inline';",

@@ -22,6 +22,8 @@ let isQuitting = false;
 
 const isDev = !app.isPackaged;
 
+app.disableHardwareAcceleration();
+
 // Content Security Policy — 注入到所有响应的 header，避免 Electron 启动时那条
 // "Insecure Content-Security-Policy" 警告。设计上：
 //   - 显式不放 'unsafe-eval'（production 由 Vite 构建、无 eval 需求；dev 也是 loadFile dist 产物，不需要）
